@@ -1,0 +1,14 @@
+Crawling
+Indexing of Posts
+
+Topics of the Day
+(Ranking)
+
+One Article per Topic / Different articles
+(Clustering)
+
+Search for Articles
+
+Topic developement over time
+
+Topics per Country

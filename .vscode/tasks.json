@@ -1,0 +1,29 @@
+{
+    "version": "0.1.0",
+    "command": "tsc",
+    "isShellCommand": true,
+    "args": ["--out", "final.js", "main.ts"],
+    "showOutput": "always",
+    "problemMatcher": "$tsc"
+}
+
+
+{
+    "version": "0.1.0",
+    "command": "bash",
+    "args": ["-c"],
+    "isShellCommand": true,
+    "showOutput": "always",
+    "tasks": [
+        {
+            "taskName": "Compile",
+            "suppressTaskName": true,
+            "args": ["tsc", "--out", "compiled.js", "main.ts"]
+        },
+        {
+            "taskName": "Run",
+            "suppressTaskName": true,
+            "args": ["node", "compiled.js"]
+        }
+    ]
+}
