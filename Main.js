@@ -5,16 +5,22 @@ var Downloader =  require('./Downloader.js');
 var ArticleScanner = require('./ArticleScanner.js');
 var LinkScanner = require('./LinkScanner.js');
 var Article = require('./Article.js');
+var Link = require('./Link.js');
+var DataManager = require('./DataManager.js');
 
-s = new LinkScanner();
-new Downloader(s, "", "https://www.rt.com/");
+var dm = new DataManager();
+//dm.disconnect();
 
-/*s = new ArticleScanner();
+/*s = new LinkScanner();
 
 var stack = [];
-for (i = 0; i < articles.length; i++)
+for (i = 0; i < sources.length; i++)
 {
-    stack.push(new Downloader(s, "", articles[i]));
+    if(i == 3)
+    {
+        console.log("Download: " + sources[i].url);
+        stack.push(new Downloader(s, "", sources[i].url));
+    }
 }
 
 intervalId = setInterval(function(){
@@ -26,6 +32,11 @@ intervalId = setInterval(function(){
     else
     {
         console.log("#############");
+        var links = s.getLinks();
+        for (i = 0; i < links.length; i++)
+        {
+            console.log(links[i].toString());
+        }
         s.printScore();
         console.log("#############");
         

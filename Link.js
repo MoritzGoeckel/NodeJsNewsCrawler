@@ -5,6 +5,7 @@ module.exports = class Link{
         this.date = date;
         this.source = source;
         this.url = url;
+        this.processedTitle = undefined;
     }
 
     isValid()
@@ -20,5 +21,32 @@ module.exports = class Link{
                 "picture": (typeof this.url == 'undefined' ? "F":"T"),
                 "source": (typeof this.source == 'undefined' ? "F":"T"),
                 "date": (typeof this.date == 'undefined' ? "F":"T")};
+    }
+
+    getProcessedTitle()
+    {
+        if(typeof this.processedTitle == 'undefined')
+        {
+            var p = "";
+            var prohibitedChars = ["\n", "\r\n", "\r", "\t"];
+            
+            var lastChar = " ";
+            for(var i = 0; i < this.title.length; i++)
+            {
+                if(prohibitedChars.indexOf(this.title[i]) == -1 && (lastChar != " " || this.title[i] != " "))
+                {
+                    lastChar = this.title[i];
+                    p += this.title[i];
+                }
+            }
+
+            this.processedTitle = p;
+        }
+        
+        return this.processedTitle;
+    }
+
+    toString(){
+        return this.getProcessedTitle();
     }
 }

@@ -5,6 +5,7 @@ module.exports = class ArticleScanner{
 
     constructor()
     {
+        this.articles = [];
         this.okayRecieved = 0;
         this.recieved = 0;
     }
@@ -56,8 +57,13 @@ module.exports = class ArticleScanner{
         }
         else{
             console.log("OK     " + url.substring(0, 40));
+            this.articles.push(a);
             this.okayRecieved++;
         }
+    }
+
+    getArticles(){
+        return this.articles;
     }
 
     printScore()

@@ -1,0 +1,3 @@
+npm install redis
+npm install cheerio
+npm install request

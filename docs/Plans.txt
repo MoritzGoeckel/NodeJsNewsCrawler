@@ -12,3 +12,49 @@ Search for Articles
 Topic developement over time
 
 Topics per Country
+
+######## Blacklist Idea ###############################################################
+Blacklist for non article stuff: 
+    Articles = Scan(t) - Scan(0)
+    Articles = Scan(t) - Blacklist
+    Blacklist = Everything in Scan(t -7 Tage) AND Scan(t)
+
+######## Redis ########################################################################
+    Hash: Key -> Key Value, Key Value ...
+    Set: Key -> Value, Value, Value ... (unions, intersections, differences) (unsorted)
+    OSet: Key -> Score Value, Score Value ...
+    String: Key -> Value
+    List: Key -> Value, Value, Value ... (sorted by insertion)
+######################################################################################
+
+######## Algorithm ################################################################
+    #Insert EntireCurrentScan in db, retrieve sdiff with blacklist, add difference to blacklist and process the difference
+    #delete CurrentScan
+
+Blacklist: Set ("blacklist":source -> title, title, title, ...)        remove too old ones
+CurrentScan: Set ("current":source -> title, title, title, ...)        to difference with blacklist
+
+    #Got new articles from difference... update wordscount and RightNeighborRelation and WordsOnDay
+    #Generate HottestWordsOnDay from WordsOnDay
+    #Insert Articles and Update lastArticleID
+    #Update WordsToArticles
+
+WordCount: String ("WordCount:"word -> count)
+//RightNeighborRelation: SortedSet ("next:"word -> (count nextWord), (count nextWord), ...)
+
+WordsOnDay: Hash ("WordOnDay:"dayDate -> (word count), (word, count), ...)
+HottestWordsOnDay: SortedSet ("HottestWordsOnDay:"dayDate -> (countIn24Hours word), (countIn24Hours word), ...)
+
+Articles: Hash ("article:"id -> ("title" title), ("date" date), ("source" sourceId), ("url" url))
+LastArticleId: String ("lastArticleID" -> id)
+
+WordsToArticles: SortedSet ("WordsToArticles:"word -> (date article), (date article), ...)
+################################################################################
+
+HottestWords - CommonWords
+Historic Hottestes words
+History of Words popularity
+Last Articles
+Articles to Word
+
+RightNeighborRelation?? -> HottestWords as Sequences if likely
