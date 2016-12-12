@@ -13,12 +13,6 @@ Topic developement over time
 
 Topics per Country
 
-######## Blacklist Idea ###############################################################
-Blacklist for non article stuff: 
-    Articles = Scan(t) - Scan(0)
-    Articles = Scan(t) - Blacklist
-    Blacklist = Everything in Scan(t -7 Tage) AND Scan(t)
-
 ######## Redis ########################################################################
     Hash: Key -> Key Value, Key Value ...
     Set: Key -> Value, Value, Value ... (unions, intersections, differences) (unsorted)
@@ -27,17 +21,22 @@ Blacklist for non article stuff:
     List: Key -> Value, Value, Value ... (sorted by insertion)
 ######################################################################################
 
-######## Algorithm ################################################################
-    #Insert EntireCurrentScan in db, retrieve sdiff with blacklist, add difference to blacklist and process the difference
-    #delete CurrentScan
+################################# Serveable functions ##########################
+HottestWords right now
+Hottestes words over time: Timeframes of Days Weeks Months
+Popularity over time for a given Word
+     - CommonWords
+    RightNeighborRelation -> HottestWords as Sequences if likely
+    SameHeadlineRelation -> HottestWords as Topic collection
 
-Blacklist: Set ("blacklist":source -> title, title, title, ...)        remove too old ones
-CurrentScan: Set ("current":source -> title, title, title, ...)        to difference with blacklist
+Last Articles
+Find Articles to a given Word
 
-    #Got new articles from difference... update wordscount and RightNeighborRelation and WordsOnDay
-    #Generate HottestWordsOnDay from WordsOnDay
-    #Insert Articles and Update lastArticleID
-    #Update WordsToArticles
+Associations to a given Word
+Associations to a given Word over time
+
+######################## Processing ########################
+#Generate HottestWordsOnDay from WordsOnDay
 
 WordCount: Hash ("WordCount:"word -> count)
 TotalWordsCount: -> count
@@ -45,21 +44,8 @@ TotalWordsCount: -> count
 SortedSet "RightNeighborRelation:"word -> (count nextWord), (count nextWord), ...
 SortedSet "SameHeadlineRelation:"date":"word -> (count otherWord), (count otherWord), ...
 
+"InvertedIndex:"Word Set -> id, id, id
+#Update WordsToArticles
+
 "WordOnDay":dayDate Set -> ("word" count), ("word", count)
 "HottestWordsOnDay:"dayDate SortedSet -> (countIn24Hours word), (countIn24Hours word), ...
-
-"article:"id Hash -> ("title" title), ("date" date), ("source" sourceId), ("url" url)
-"LastArticleId": String -> id
-
-"InvertedIndex:"Word Set -> id, id, id
-################################################################################
-
-################################# Serveable functions ##########################
-HottestWords - CommonWords
-Historic Hottestes words
-History of Words popularity
-Last Articles
-Articles to Word
-RightNeighborRelation -> HottestWords as Sequences if likely
-SameHeadlineRelation -> HottestWords as Topic collection -> Type word, get asociations
-History of associations to word

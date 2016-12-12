@@ -57,7 +57,7 @@ module.exports = class DataManager{
                             var title = reply[i];
                             var link = linksViaTitle[title]
                             theBase.client.hmset("link:" + theBase.lastLinkId++, link.getDataArray());
-                            console.log("Inserted " + link.getDataArray());
+                            //console.log("Inserted " + link.getDataArray());
                             //console.log("lastLinkId is now: " + theBase.lastLinkId);
                         }
 
@@ -68,9 +68,9 @@ module.exports = class DataManager{
 
                             //Set new blacklist
                             theBase.client.del(blacklistName, function(err, reply){
-                                console.log("Deleted blacklist " + reply + " | " + err);
+                                //console.log("Deleted blacklist " + reply + " | " + err);
                                 theBase.client.sadd(blacklistName, linkTitles, function(err, reply) {
-                                    console.log("Created blacklist blacklist " + reply + " | " + err);
+                                    //console.log("Created blacklist blacklist " + reply + " | " + err);
                                 });
                             });
                         }
@@ -81,9 +81,8 @@ module.exports = class DataManager{
                     });
                 });
             } else {
-                console.log('Creating blacklist as now: ' + blacklistName);
                 theBase.client.sadd(blacklistName, linkTitles, function(err, reply) {
-                    console.log("Added blacklist: " + reply);
+                    console.log("Init blacklist: " + reply);
                 });
             }
         });

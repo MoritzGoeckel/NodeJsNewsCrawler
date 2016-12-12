@@ -1,6 +1,6 @@
 var request = require('request');
 
-module.exports = class Downloader{
+module.exports = class Download{
 
     constructor(scanner, source, url)
     {
