@@ -3,17 +3,19 @@ var Link = require('./Link.js');
 
 module.exports = class LinkScanner{
 
-    constructor()
+    constructor(recievedLinks)
     {
-        this.links = [];
-        this.okayRecieved = 0;
-        this.recieved = 0;
+        this.recievedLinks = recievedLinks;
     }
     
-    onGotPage(html, source, url)
+    onGotPage(html, sourceId, url)
     {
+        var links = [];
+        
         let $ = cheerio.load(html);
         
+        var time = Math.floor(Date.now() / 1000);
+
         //$(".headline a").css('background-color', 'red');
         //$("h1 a").css('background-color', 'red');
         //Todo: crawling component
@@ -30,35 +32,33 @@ module.exports = class LinkScanner{
                 if(r.test(fullUrl) == false)
                     fullUrl = url + fullUrl;
                 
-                var link = new Link($(this).text(), undefined, fullUrl, source);
+                var link = new Link(theBase.processTitle($(this).text()), time, fullUrl, sourceId);
                 if(link.isValid())
                 {
-                    theBase.links.push(link);
+                    links.push(link);
                     foundLinks++;
                 }
             }
         });
 
-        this.recieved++;
-
-        if(foundLinks > 10)
-        {
-            this.okayRecieved++;
-            console.log("OK     Found links: " + foundLinks + "     " + url);        
-        }
-        else
-        {
-            console.log("Error  Found links: " + foundLinks + "     " + url);                    
-        }
+        this.recievedLinks(sourceId, links);
     }
 
-    getLinks()
+    processTitle(title)
     {
-        return this.links;
-    }
+        var p = "";
+        var prohibitedChars = ["\n", "\r\n", "\r", "\t"];
+        
+        var lastChar = " ";
+        for(var i = 0; i < title.length; i++)
+        {
+            if(prohibitedChars.indexOf(title[i]) == -1 && (lastChar != " " || title[i] != " "))
+            {
+                lastChar = title[i];
+                p += title[i];
+            }
+        }
 
-    printScore()
-    {
-        console.log("Score: " + this.okayRecieved + "/" + this.recieved + " =" + (this.okayRecieved / this.recieved));
+        return p;
     }
 }

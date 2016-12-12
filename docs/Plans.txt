@@ -39,22 +39,27 @@ CurrentScan: Set ("current":source -> title, title, title, ...)        to differ
     #Insert Articles and Update lastArticleID
     #Update WordsToArticles
 
-WordCount: String ("WordCount:"word -> count)
-//RightNeighborRelation: SortedSet ("next:"word -> (count nextWord), (count nextWord), ...)
+WordCount: Hash ("WordCount:"word -> count)
+TotalWordsCount: -> count
 
-WordsOnDay: Hash ("WordOnDay:"dayDate -> (word count), (word, count), ...)
-HottestWordsOnDay: SortedSet ("HottestWordsOnDay:"dayDate -> (countIn24Hours word), (countIn24Hours word), ...)
+SortedSet "RightNeighborRelation:"word -> (count nextWord), (count nextWord), ...
+SortedSet "SameHeadlineRelation:"date":"word -> (count otherWord), (count otherWord), ...
 
-Articles: Hash ("article:"id -> ("title" title), ("date" date), ("source" sourceId), ("url" url))
-LastArticleId: String ("lastArticleID" -> id)
+"WordOnDay":dayDate Set -> ("word" count), ("word", count)
+"HottestWordsOnDay:"dayDate SortedSet -> (countIn24Hours word), (countIn24Hours word), ...
 
-WordsToArticles: SortedSet ("WordsToArticles:"word -> (date article), (date article), ...)
+"article:"id Hash -> ("title" title), ("date" date), ("source" sourceId), ("url" url)
+"LastArticleId": String -> id
+
+"InvertedIndex:"Word Set -> id, id, id
 ################################################################################
 
+################################# Serveable functions ##########################
 HottestWords - CommonWords
 Historic Hottestes words
 History of Words popularity
 Last Articles
 Articles to Word
-
-RightNeighborRelation?? -> HottestWords as Sequences if likely
+RightNeighborRelation -> HottestWords as Sequences if likely
+SameHeadlineRelation -> HottestWords as Topic collection -> Type word, get asociations
+History of associations to word

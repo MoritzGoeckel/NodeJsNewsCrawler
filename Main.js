@@ -8,8 +8,42 @@ var Article = require('./Article.js');
 var Link = require('./Link.js');
 var DataManager = require('./DataManager.js');
 
-var dm = new DataManager();
-//dm.disconnect();
+//End imports
+
+var dm = new DataManager(function(){
+    
+    var s = new LinkScanner(function(sourceId, links){
+        //console.log("###### " + sourceId + " ######");
+        //console.log(links.length);
+
+        dm.saveCurrentScan(sourceId, links);
+    });
+
+    for (i = 0; i < sources.length; i++)
+    {
+        console.log("Download: " + sources[i].name);
+        new Downloader(s, sources[i].id, sources[i].url);
+    }    
+
+    //dm.deleteBlacklist("test");
+
+    //dm.cleanSlate()
+
+    /*var links = [];
+    links.push(new Link("a", "d", "u", "test"));
+    links.push(new Link("e", "d", "u", "test"));
+    links.push(new Link("k", "d", "u", "test"));
+    links.push(new Link("d", "d", "u", "test"));
+
+    dm.saveCurrentScan("test", links);*/
+    //dm.disconnect();
+
+    /*dm.getLinks(function(link){
+        console.log(link);
+    });*/
+
+    //dm.disconnect();
+});
 
 /*s = new LinkScanner();
 
