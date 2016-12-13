@@ -30,32 +30,33 @@ module.exports = class DataManager{
 
     saveCurrentScan(sourceId, links)
     {
-        var linkTitles = [];
-        var linksViaTitle = [];
+        var linkUrls = [];
+        var linksViaUrls = [];
 
         for(var i in links)
         {
-            linkTitles.push(links[i].title);
-            linksViaTitle[links[i].title] = links[i];
+            linkUrls.push(links[i].url);
+            linksViaUrls[links[i].url] = links[i];
         }
 
         var theBase = this;
-        var blacklistName = 'lastScan:' + sourceId;
+        var blacklistName = 'blacklist:' + sourceId;
+        var oldBlacklistName = 'oldBlacklist:' + sourceId;
         var currentScanName = 'currentScan:' + sourceId;
         
         this.client.exists(blacklistName, function(err, reply) {
             if (reply === 1) {
                 //console.log('Adding to ' + currentScanName);
-                theBase.client.sadd(currentScanName, linkTitles, function(err, reply) {
+                theBase.client.sadd(currentScanName, linkUrls, function(err, reply) {
                     //console.log("Added to " + currentScanName + ": " + reply);
-                    theBase.client.sdiff(currentScanName, blacklistName, function(err, reply) {
+                    theBase.client.sdiff(currentScanName, blacklistName, oldBlacklistName, function(err, reply) {
                         
                         console.log("New for " + sourceId + ": " + reply.length);
-                        
+
                         for(var i in reply)
                         {
-                            var title = reply[i];
-                            var link = linksViaTitle[title]
+                            var url = reply[i];
+                            var link = linksViaUrls[url]
                             theBase.client.hmset("link:" + theBase.lastLinkId++, link.getDataArray());
                             //console.log("Inserted " + link.getDataArray());
                             //console.log("lastLinkId is now: " + theBase.lastLinkId);
@@ -66,12 +67,8 @@ module.exports = class DataManager{
                             theBase.client.set('lastLinkId', theBase.lastLinkId);
                             console.log("lastLinkId is now: " + theBase.lastLinkId);
 
-                            //Set new blacklist
-                            theBase.client.del(blacklistName, function(err, reply){
-                                //console.log("Deleted blacklist " + reply + " | " + err);
-                                theBase.client.sadd(blacklistName, linkTitles, function(err, reply) {
-                                    //console.log("Created blacklist blacklist " + reply + " | " + err);
-                                });
+                            theBase.client.sadd(blacklistName, reply, function(err, reply) {
+                                    //console.log("Added to blacklist " + reply + " | " + err);
                             });
                         }
 
@@ -81,7 +78,7 @@ module.exports = class DataManager{
                     });
                 });
             } else {
-                theBase.client.sadd(blacklistName, linkTitles, function(err, reply) {
+                theBase.client.sadd(blacklistName, linkUrls, function(err, reply) {
                     console.log("Init blacklist: " + reply);
                 });
             }
@@ -104,7 +101,40 @@ module.exports = class DataManager{
                 if(reply != null)
                     linkArrived(new Link(reply.title, reply.date, reply.url, reply.sourceId));
             });
-        }
+        }        
+    }
+
+    getUnprocessedLinks(linkArrived)
+    {
+        var theBase = this;
+        
+        theBase.client.get('lastProcessedLinkId', function(err, reply) {
+            if(typeof reply == 'undefined' || reply == null){
+                theBase.client.set('lastProcessedLinkId', '0');
+                console.log("lastProcessedLinkId init to: 0");
+                theBase.lastProcessedLinkId = 0;
+            }
+            else
+            {
+                console.log("lastProcessedLinkId id: " + reply);
+                theBase.lastProcessedLinkId = parseInt(reply);
+            }
+
+            for(var i = theBase.lastProcessedLinkId; i < this.lastLinkId; i++)
+            {
+                this.client.hgetall("link:"+i, function(err, reply) {
+                    if(reply != null){
+                        linkArrived(new Link(reply.title, reply.date, reply.url, reply.sourceId));
+                        theBase.client.incr('lastProcessedLinkId');        
+                    }
+                });
+            }
+        });
+    }
+
+    resetProcessedDataCounter()
+    {
+        this.client.set('lastProcessedLinkId', '0');
     }
 
     cleanSlate()
