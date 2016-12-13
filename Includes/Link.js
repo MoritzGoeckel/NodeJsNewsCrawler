@@ -35,14 +35,17 @@ module.exports = class Link{
     getWords()
     {
         var words = this.title.split(/[,\.\-#+^<´>|;:_'*~?=\")(/&%$§!) ]+/);
-        for(var i in words)
+        
+        for(var i = 0; i < words.length; i++)
         {
-            if(words[i] == null || words[i] == '')
+            if(words[i] == false || words[i] == null || words[i] == '' || words[i] == ' ' || typeof words[i] === 'undefined' || words[i] == " ")
+            {
                 words.splice(i, 1);
+                i--;
+            }
             else
                 words[i] = words[i].toLowerCase();
         }
-    
         
         function removeDoubleElements(a) {
             var seen = {};
@@ -51,10 +54,13 @@ module.exports = class Link{
             });
         }
     
-        return removeDoubleElements(words);
+        words = removeDoubleElements(words);
+
+        while(words[words.length - 1] == " ")
+            words.splice(words.length - 1);
+
+        return words;
     }
-    
-    
 
     toString(){
         return this.title;

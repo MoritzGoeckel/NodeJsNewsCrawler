@@ -10,33 +10,30 @@ var DataManager = require('./Includes/DataManager.js');
 
 //End imports
 
-/*var dm = new DataManager(function(){
+var dm = new DataManager(function(){
     
     dm.getUnprocessedLinks(function(link, linkId){
-        
-        console.log(linkId);
-        //console.log(link);
+
+        console.log("Processing link: " + linkId);
+        processLink(link, linkId);        
 
     });
 
     //dm.disconnect();
-});*/
-
-var s = new LinkScanner();
-var c = new Link(s.processTitle("eins zwei drei vier fünf"), 123, "http:asfaf", "test");
-processLink(c);
+});
 
 function processLink(link, linkId)
 {
-    console.log("Processing link: " + linkId);
-
     var words = link.getWords();
     var day = Math.floor(Date.now() / 1000 / 60 / 60 / 24);
+    checkValue(day, "day", day);
 
-    for(var i in words)
+    for(var i = 0; i < words.length; i++)
     {
         var word = words[i];
-        
+
+        checkValue(word, "word", words);
+
         //Count of all seen words
         dm.client.zincrby("generalWordCount", 1, word);
 
@@ -50,6 +47,8 @@ function processLink(link, linkId)
         if(i+1 < words.length)
         {
             var rightWord = words[i + 1];
+            checkValue(rightWord, "rightWord " + (i + 1), words);
+            
             dm.client.zincrby("rnWords:" + word, 1, rightWord);
         }
 
@@ -65,6 +64,9 @@ function processLink(link, linkId)
         {
             var secondWord = words[j];
 
+            checkValue(firstWord, "firstWord", firstWord);
+            checkValue(secondWord, "secondWord", secondWord);
+
             //Given word
             dm.client.zincrby("sameHeadlineCount:" + firstWord, 1, secondWord);
             dm.client.zincrby("sameHeadlineCount:" + secondWord, 1, firstWord); 
@@ -72,11 +74,18 @@ function processLink(link, linkId)
             //Over time by given word
             dm.client.zincrby("daySameHeadlineCount:" + day + ":" + firstWord, 1, secondWord);
             dm.client.zincrby("daySameHeadlineCount:" + day + ":" + secondWord, 1, firstWord); 
-             
-            console.log("Pair: " + orderedFirstWord + " <> " + orderedSecondWord);
         }
     }
 
     dm.client.incrby("totalWordsCountBySource:"+link.sourceId, words.length);
     dm.client.incrby("totalWordsCount", words.length);
+}
+
+function checkValue(value, msg, extra)
+{
+    if(value == null || value == '' || value == " " || typeof value === 'undefined' || value == false)
+    {
+        console.log(extra);
+        console.log( "->" + msg );
+    }    
 }

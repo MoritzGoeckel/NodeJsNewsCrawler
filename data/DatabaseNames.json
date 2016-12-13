@@ -1,0 +1,17 @@
+{
+    "generalWordCount" : "generalWordCount",
+    "dayWordCount:" : "dayWordCount:",
+    "wordOnDate:" : "wordOnDate:",
+    "rnWords:" : "rnWords:",
+    "invIndex:" : "invIndex:",
+    "sameHeadlineCount:" : "sameHeadlineCount:",
+    "daySameHeadlineCount:" : "daySameHeadlineCount:",
+    "totalWordsCountBySource:" : "totalWordsCountBySource:",
+    "totalWordsCount" : "totalWordsCount",
+    "lastLinkId" : "lastLinkId",
+    "blacklist:" : "blacklist:",
+    "oldBlacklist:" : "oldBlacklist:",
+    "currentScan:" : "currentScan:",
+    "link:" : "link:",
+    "lastProcessedLinkId:" : "lastProcessedLinkId:"
+}

@@ -126,7 +126,7 @@ module.exports = class DataManager{
                 theBase.client.hgetall("link:"+i, function(err, reply) {
                     if(reply != null){
                         linkArrived(new Link(reply.title, reply.date, reply.url, reply.sourceId), reply.id);
-                        //theBase.client.incr('lastProcessedLinkId');        
+                        theBase.client.incr('lastProcessedLinkId');        
                     }
                 });
             }
