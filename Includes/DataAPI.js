@@ -1,3 +1,5 @@
+var Link = require('./Link.js');
+
 module.exports = class DataAPI{
 
     constructor(client)
@@ -5,24 +7,57 @@ module.exports = class DataAPI{
         this.client = client;
     }
 
+    buildWightedWords(inputArray, outputArray, i, theBase, callback)
+    {
+        if(i < inputArray.length)
+        {
+            var word = inputArray[i];
+            theBase.getTotalCountForWord(word, function(count){
+                //count: parseFloat(inputArray[i+1]), likelyhood: count,
+                outputArray.push({word: word, score: (parseFloat(inputArray[i+1]) / count) * Math.log(inputArray[i+1])}); //Todo: better formula?
+                theBase.buildWightedWords(inputArray, outputArray, i + 2, theBase, callback);
+            });
+        }
+        else
+        {
+            outputArray.sort(function (a, b) {return b.score - a.score});                
+            callback(outputArray);
+        }
+    }
+
+    //Todo: Wight
     getRightNeighbourForWord(word, callback)
     {
+        var theBase = this;
         this.client.zrevrangebyscore("rnWords:" + word.toLowerCase(), "+inf", 0, 'withscores', function(err, reply){
-            callback(reply);
+            var words = [];
+            theBase.buildWightedWords(reply, words, 0, theBase, function(result){
+                callback(result);
+            });
         });    
     }
 
+    //Todo: Wight
     getSameHeadlineForWord(word, callback)
     {
-        this.client.zrevrangebyscore("sameHeadlineCount:" + word.toLowerCase(), "+inf", 0, 'withscores', function(err, reply){
-            callback(reply);
+        var theBase = this;
+        theBase.client.zrevrangebyscore("sameHeadlineCount:" + word.toLowerCase(), "+inf", 0, 'withscores', function(err, reply){
+            var words = [];
+            theBase.buildWightedWords(reply, words, 0, theBase, function(result){
+                callback(result);
+            });
         });
     }
 
+    //Todo: Wight
     getSameHeadlineCountForDayAndWord(day, word, callback)
     {
+        var theBase = this;
         this.client.zrevrangebyscore("daySameHeadlineCount:" + day + ":" + word.toLowerCase(), "+inf", 0, 'withscores', function(err, reply){
-            callback(reply);
+            var words = [];
+            theBase.buildWightedWords(reply, words, 0, theBase, function(result){
+                callback(result);
+            });
         });
     }
 
@@ -40,10 +75,15 @@ module.exports = class DataAPI{
         });
     }
 
+    //Todo: Wight
     getMostPopularWordsOnDay(day, callback)
     {
+        var theBase = this;
         this.client.zrevrangebyscore("dayWordCount:" + day, "+inf", 1, 'withscores', function(err, reply){
-            callback(reply);
+            var words = [];
+            theBase.buildWightedWords(reply, words, 0, theBase, function(result){
+                callback(result);
+            });
         });
     }
 
@@ -105,12 +145,12 @@ module.exports = class DataAPI{
             for(var i = 0; i < wights.length; i++)
                 args.push(wights[i]);
 
-            console.log(args);
+            //console.log(args);
 
             theBase.client.zunionstore(args, function(err, reply){
-                theBase.client.zrevrangebyscore("tmp", "+inf", 0, 'withscores', function(err, reply){
+                theBase.client.zrevrangebyscore("tmp", "+inf", 0, function(err, reply){ //'withscores'
                     callback(reply);
-                    theBase.client.del("tmp");
+                    theBase.client.del("tmp"); //Todo: Cacheing maybe?
                 });
             });
         });

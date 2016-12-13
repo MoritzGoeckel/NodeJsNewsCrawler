@@ -1,0 +1,8 @@
+/api/search/:query
+/api/rightneighbour/:word
+/api/sameheadline/:word
+/api/sameheadline/:word/:day
+/api/count/:word
+/api/popularwords/:day
+/api/popularwordhistory/:word
+/api/link/:id

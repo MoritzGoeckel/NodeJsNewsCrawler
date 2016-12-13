@@ -1,3 +1,6 @@
 npm install redis
 npm install cheerio
 npm install request
+npm install express --save
+npm install express-rest
+(https://www.npmjs.com/package/express-rest)
