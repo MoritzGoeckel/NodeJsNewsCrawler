@@ -44,52 +44,53 @@ module.exports = class DataManager{
         var oldBlacklistName = 'oldBlacklist:' + sourceId;
         var currentScanName = 'currentScan:' + sourceId;
         
-        this.client.exists(blacklistName, function(err, reply) {
-            if (reply === 1) {
-                //console.log('Adding to ' + currentScanName);
-                theBase.client.sadd(currentScanName, linkUrls, function(err, reply) {
-                    //console.log("Added to " + currentScanName + ": " + reply);
-                    theBase.client.sdiff(currentScanName, blacklistName, oldBlacklistName, function(err, reply) {
-                        
-                        console.log("New for " + sourceId + ": " + reply.length);
+        theBase.client.sadd(currentScanName, linkUrls, function(err, reply) {
+            //console.log("Added to " + currentScanName + ": " + reply);
+            theBase.client.sdiff(currentScanName, blacklistName, oldBlacklistName, function(err, reply) {
+                
+                console.log("New for " + sourceId + ": " + reply.length);
 
-                        for(var i in reply)
-                        {
-                            var url = reply[i];
-                            var link = linksViaUrls[url]
-                            theBase.client.hmset("link:" + theBase.lastLinkId++, link.getDataArray());
-                            //console.log("Inserted " + link.getDataArray());
-                            //console.log("lastLinkId is now: " + theBase.lastLinkId);
-                        }
+                for(var i in reply)
+                {
+                    var url = reply[i];
+                    var link = linksViaUrls[url]
+                    var id = theBase.lastLinkId++;
+                    var data = link.getDataArray();
+                    data.push('id', id);
 
-                        if(reply.length != 0)
-                        {
-                            theBase.client.set('lastLinkId', theBase.lastLinkId);
-                            console.log("lastLinkId is now: " + theBase.lastLinkId);
+                    theBase.client.hmset("link:" + id, data);
+                    //console.log("Inserted " + link.getDataArray());
+                    //console.log("lastLinkId is now: " + theBase.lastLinkId);
+                }
 
-                            theBase.client.sadd(blacklistName, reply, function(err, reply) {
-                                    //console.log("Added to blacklist " + reply + " | " + err);
-                            });
-                        }
+                if(reply.length != 0)
+                {
+                    theBase.client.set('lastLinkId', theBase.lastLinkId);
+                    console.log("lastLinkId is now: " + theBase.lastLinkId);
 
-                        theBase.client.del(currentScanName, function(err, reply){
-                            //console.log("Deleted currentScan " + reply + " | " + err);
-                        });
+                    theBase.client.sadd(blacklistName, reply, function(err, reply) {
+                            //console.log("Added to blacklist " + reply + " | " + err);
                     });
+                }
+
+                theBase.client.del(currentScanName, function(err, reply){
+                    //console.log("Deleted currentScan " + reply + " | " + err);
                 });
-            } else {
-                theBase.client.sadd(blacklistName, linkUrls, function(err, reply) {
-                    console.log("Init blacklist: " + reply);
-                });
-            }
+            });
         });
     }
     
-    deleteBlacklist(sourceId)
+    rolloverBlacklist(sourceId)
     {
-        var blacklistName = 'lastScan:' + sourceId;
-        this.client.del(blacklistName, function(err, reply){
-            console.log("Deleted blacklist " + reply + " | " + err);
+        var blacklistName = 'blacklist:' + sourceId;
+        var oldBlacklistName = 'oldBlacklist:' + sourceId;
+        var theBase = this;
+
+        this.client.del(oldBlacklistName, function(err, reply){
+            console.log("Deleted old blacklist " + reply + " | " + err);
+            theBase.client.rename(blacklistName, oldBlacklistName, function(err, reply){
+                console.log("Renamed the new to the old blacklist " + reply + " | " + err);
+            });
         });
     }
 
@@ -99,7 +100,7 @@ module.exports = class DataManager{
         {
             this.client.hgetall("link:"+i, function(err, reply) {
                 if(reply != null)
-                    linkArrived(new Link(reply.title, reply.date, reply.url, reply.sourceId));
+                    linkArrived(new Link(reply.title, reply.date, reply.url, reply.sourceId), reply.id);
             });
         }        
     }
@@ -120,12 +121,12 @@ module.exports = class DataManager{
                 theBase.lastProcessedLinkId = parseInt(reply);
             }
 
-            for(var i = theBase.lastProcessedLinkId; i < this.lastLinkId; i++)
+            for(var i = theBase.lastProcessedLinkId; i < theBase.lastLinkId; i++)
             {
-                this.client.hgetall("link:"+i, function(err, reply) {
+                theBase.client.hgetall("link:"+i, function(err, reply) {
                     if(reply != null){
-                        linkArrived(new Link(reply.title, reply.date, reply.url, reply.sourceId));
-                        theBase.client.incr('lastProcessedLinkId');        
+                        linkArrived(new Link(reply.title, reply.date, reply.url, reply.sourceId), reply.id);
+                        //theBase.client.incr('lastProcessedLinkId');        
                     }
                 });
             }

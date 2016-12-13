@@ -32,6 +32,30 @@ module.exports = class Link{
                 "date": (typeof this.date == 'undefined' ? "F":"T")};
     }
 
+    getWords()
+    {
+        var words = this.title.split(/[,\.\-#+^<´>|;:_'*~?=\")(/&%$§!) ]+/);
+        for(var i in words)
+        {
+            if(words[i] == null || words[i] == '')
+                words.splice(i, 1);
+            else
+                words[i] = words[i].toLowerCase();
+        }
+    
+        
+        function removeDoubleElements(a) {
+            var seen = {};
+            return a.filter(function(item) {
+                return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+            });
+        }
+    
+        return removeDoubleElements(words);
+    }
+    
+    
+
     toString(){
         return this.title;
     }
