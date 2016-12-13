@@ -47,5 +47,7 @@ SortedSet "SameHeadlineRelation:"date":"word -> (count otherWord), (count otherW
 "InvertedIndex:"Word Set -> id, id, id
 #Update WordsToArticles
 
-"WordOnDay":dayDate Set -> ("word" count), ("word", count)
 "HottestWordsOnDay:"dayDate SortedSet -> (countIn24Hours word), (countIn24Hours word), ...
+
+
+"WordOnDay":word Set -> ("day" count), ("day", count)

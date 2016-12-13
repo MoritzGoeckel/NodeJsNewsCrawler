@@ -94,7 +94,7 @@ module.exports = class DataManager{
         });
     }
 
-    getLinks(linkArrived)
+    /*getLinks(linkArrived)
     {
         for(var i = 0; i < this.lastLinkId; i++)
         {
@@ -103,7 +103,7 @@ module.exports = class DataManager{
                     linkArrived(new Link(reply.title, reply.date, reply.url, reply.sourceId), reply.id);
             });
         }        
-    }
+    }*/
 
     getUnprocessedLinks(linkArrived)
     {
@@ -133,10 +133,10 @@ module.exports = class DataManager{
         });
     }
 
-    resetProcessedDataCounter()
+    /*resetProcessedDataCounter()
     {
         this.client.set('lastProcessedLinkId', '0');
-    }
+    }*/
 
     cleanSlate()
     {
