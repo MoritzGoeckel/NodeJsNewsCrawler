@@ -13,8 +13,7 @@ module.exports = class DataAPI{
         {
             var word = inputArray[i];
             theBase.getTotalCountForWord(word, function(count){
-                //count: parseFloat(inputArray[i+1]), likelyhood: count,
-                outputArray.push({word: word, score: (parseFloat(inputArray[i+1]) / count) * Math.log(inputArray[i+1])}); //Todo: better formula?
+                outputArray.push({word: word, count: parseFloat(inputArray[i+1]), likelyhood: count, score: (parseFloat(inputArray[i+1]) / count) * Math.log(inputArray[i+1])}); //Todo: better formula?
                 theBase.buildWightedWords(inputArray, outputArray, i + 2, theBase, callback);
             });
         }

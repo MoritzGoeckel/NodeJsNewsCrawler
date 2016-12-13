@@ -6,3 +6,4 @@
 /api/popularwords/:day
 /api/popularwordhistory/:word
 /api/link/:id
+/api/sources/

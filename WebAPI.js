@@ -15,6 +15,8 @@ var expressRest = require('express-rest');
  
 //End imports
 
+var maxReturnElements = 50;
+
 var dm = new DataManager(function()
 {
     var api = new DataAPI(dm.client);
@@ -41,7 +43,7 @@ var dm = new DataManager(function()
             }
 
             buildLinkList(0, 10, function(){
-                return rest.ok(links);
+                return rest.ok(links.slice(0, maxReturnElements));
             });
         });
     });
@@ -50,7 +52,7 @@ var dm = new DataManager(function()
 
     rest.get('/api/rightneighbour/:word', function(req, rest) {
         api.getRightNeighbourForWord(req.params.word.toLowerCase(), function(result){
-            return rest.ok(result);
+            return rest.ok(result.slice(0, maxReturnElements));
         });
     });
 
@@ -58,7 +60,7 @@ var dm = new DataManager(function()
 
     rest.get('/api/sameheadline/:word', function(req, rest) {
         api.getSameHeadlineForWord(req.params.word.toLowerCase(), function(result){
-            return rest.ok(result);
+            return rest.ok(result.slice(0, maxReturnElements));
         });
     });
 
@@ -66,7 +68,7 @@ var dm = new DataManager(function()
 
     rest.get('/api/sameheadline/:word/:day', function(req, rest) {
         api.getSameHeadlineCountForDayAndWord(req.params.day, req.params.word.toLowerCase(), function(result){
-            return rest.ok(result);
+            return rest.ok(result.slice(0, maxReturnElements));
         });
     });
 
@@ -82,7 +84,15 @@ var dm = new DataManager(function()
 
     rest.get('/api/popularwords/:day', function(req, rest) {
         api.getMostPopularWordsOnDay(req.params.day, function(result){
-            return rest.ok(result);
+            return rest.ok(result.slice(0, maxReturnElements));
+        });
+    });
+
+    //#######################################################  Popular words today  #############
+
+    rest.get('/api/popularwords/', function(req, rest) {
+        api.getMostPopularWordsOnDay(getToday(), function(result){
+            return rest.ok(result.slice(0, maxReturnElements));
         });
     });
 
@@ -90,7 +100,7 @@ var dm = new DataManager(function()
 
     rest.get('/api/popularwordhistory/:word', function(req, rest) {
         api.getWordPopularityHistoryForWord(req.params.word.toLowerCase(), function(result){
-            return rest.ok(result);
+            return rest.ok(result.slice(0, maxReturnElements));
         });
     });
 
@@ -102,6 +112,18 @@ var dm = new DataManager(function()
         });
     });
 
+    //#######################################################  get sources  #############
+
+    rest.get('/api/sources/', function(req, rest) {
+        
+        var output = {};
+        for(var i = 0; i < sources.length; i++)
+        {
+            output[sources[i].id] = sources[i];
+        }
+
+        return rest.ok(output);
+    });
     //#######################################################  Example  #############
 
     /*rest.get('/api/search/:query', function(req, rest) {

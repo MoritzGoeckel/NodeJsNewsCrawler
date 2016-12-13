@@ -25,7 +25,7 @@ var dm = new DataManager(function(){
 function processLink(link, linkId)
 {
     var words = link.getWords();
-    var day = Math.floor(Date.now() / 1000 / 60 / 60 / 24);
+    var day = Math.floor(link.date / 60 / 60 / 24);
     checkValue(day, "day", day);
 
     for(var i = 0; i < words.length; i++)
