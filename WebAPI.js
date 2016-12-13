@@ -124,6 +124,7 @@ var dm = new DataManager(function()
 
         return rest.ok(output);
     });
+    
     //#######################################################  Example  #############
 
     /*rest.get('/api/search/:query', function(req, rest) {
