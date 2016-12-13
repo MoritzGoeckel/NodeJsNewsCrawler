@@ -1,1 +1,22 @@
 //{"url": "http://www.dw.com/", "name": "DeutscheWelle", "id": "dw"},
+
+
+function getScoreFromString(str)
+{
+    var score = 0;
+    for(var i in str)
+    {
+        score += str.charCodeAt(i) * i;
+    }
+
+    return score;
+}
+
+ var secondWord = words[j];
+            var orderedFirstWord = firstWord;
+            var orderedSecondWord = secondWord;
+            if(getScoreFromString(secondWord) > getScoreFromString(firstWord))
+            {
+                orderedFirstWord = secondWord; //This is somehow dangerous in js
+                orderedSecondWord = firstWord;
+            }
