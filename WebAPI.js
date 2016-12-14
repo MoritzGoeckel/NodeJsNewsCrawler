@@ -15,7 +15,7 @@ var expressRest = require('express-rest');
  
 //End imports
 
-var maxReturnElements = 50;
+var maxReturnElements = 200;
 
 var dm = new DataManager(function()
 {
@@ -23,6 +23,9 @@ var dm = new DataManager(function()
     
     var exp = express();
     var rest = expressRest(exp);
+
+    //Make the frontend directory public
+    exp.use(express.static('Frontend'));
 
     //#######################################################  Search  #############
     rest.get('/api/search/:query', function(req, rest) {
@@ -42,7 +45,7 @@ var dm = new DataManager(function()
                     callback();
             }
 
-            buildLinkList(0, 10, function(){
+            buildLinkList(0, maxReturnElements, function(){
                 return rest.ok(links.slice(0, maxReturnElements));
             });
         });

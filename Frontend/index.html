@@ -1,51 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Page Title</title>
+<title>NWS</title>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
 </head>
 <body>
 
-<script
-  src="https://code.jquery.com/jquery-3.1.1.min.js"
-  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-  crossorigin="anonymous"></script>
-
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular.min.js"></script> -->
-<script src="script.js"></script>
-
 <div class="container-fluid" style="padding-top: 25px;">
     <div class="row">
-        <div class="col-md-2 col-sm-0"></div>
-        <div class="col-md-6 col-sm-12">
+        <div class="col-md-1 col-sm-0"></div>
+        <div class="col-md-8 col-sm-12">
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="input-group input-group-lg">
                         <input type="text" class="form-control" placeholder="Search for..." id="search_input">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" id="search_btn">Search!</button>
+                            <button class="btn btn-default" type="button" id="search_btn">Search</button>
                         </span>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-2 col-sm-0"></div>
+        <div class="col-md-1 col-sm-0"></div>
     </div>
     <div class="row">
-        <div class="col-md-2 col-sm-0"></div>
-        <div class="col-md-6 col-sm-12">
+        <div class="col-md-1 col-sm-0"></div>
+        <div class="col-md-8 col-sm-12">
             <div class="panel panel-default" id="content_wrap">
-                <div class="panel-body" id="content">
-                    
+                <div class="panel-body">
+
+                    <div id="history_wrapper">
+                        <div class="list-group-item">
+                            <h3 class="list-group-item-heading">History</h3>
+                            <div class="ct-chart ct-double-octave"></div>
+                        </div>
+                    </div>
+
+                    <div id="relatedwords_wrapper_2" style="padding-top: 10px;">
+                        <div class="list-group-item">
+                            <h3 class="list-group-item-heading">Related words</h3>
+                            <p class="list-group-item-text" id="relatedwords_wraper">...</p>
+                        </div>
+                    </div>
+
+                    <div id="searchcontent_wraper" style="padding-top: 10px;">
+
+                    </div>
+
                 </div>
             </div>
         </div>
-        <div class="col-md-2 col-sm-0"></div>
+        <div class="col-md-1 col-sm-0"></div>
     </div>
 </div>
+
+
+<script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular.min.js"></script> -->
+
+<script src="script.js"></script>
 
 </body>
 </html>

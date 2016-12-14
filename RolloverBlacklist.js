@@ -16,7 +16,7 @@ var dm = new DataManager(function(){
     {
         console.log("Switching blacklist: " + sources[i].name);
         dm.rolloverBlacklist(sources[i].id);        
-    }    
+    }   
 
     //dm.disconnect();
 });

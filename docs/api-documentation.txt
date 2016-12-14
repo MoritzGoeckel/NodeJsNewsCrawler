@@ -1,7 +1,10 @@
 /api/search/:query
 /api/rightneighbour/:word
+
+//As QUery!
 /api/sameheadline/:word
 /api/sameheadline/:word/:day
+
 /api/count/:word
 /api/popularwords/:day
 /api/popularwordhistory/:word
