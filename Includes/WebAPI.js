@@ -1,35 +1,17 @@
-var sources = require("./data/sources.json");
-var articles = require("./data/articles.json");
-
-var Download =  require('./Includes/Download.js');
-var ArticleScanner = require('./Includes/ArticleScanner.js');
-var LinkScanner = require('./Includes/LinkScanner.js');
-var Article = require('./Includes/Article.js');
-var Link = require('./Includes/Link.js');
-var DataManager = require('./Includes/DataManager.js');
-
-var DataAPI = require('./Includes/DataAPI.js');
-
 var express = require('express');
 var expressRest = require('express-rest');
- 
-//End imports
 
-var maxReturnElements = 200;
+var Link = require('./Link.js');
 
-var dm = new DataManager(function()
+module.exports.createWebApi = function(exp, rest, api, maxReturnElements, sources)
 {
-    var api = new DataAPI(dm.client);
-    
-    var exp = express();
-    var rest = expressRest(exp);
+    var theBase = this;
 
-    //Make the frontend directory public
     exp.use(express.static('Frontend'));
 
     //#######################################################  Search  #############
     rest.get('/api/search/:query', function(req, rest) {
-        var words = getWordsArray(req.params.query);
+        var words = theBase.getWordsArray(req.params.query);
         api.getLinksToWords(words, function(result){
             var links = [];
             function buildLinkList(i, count, callback)
@@ -94,7 +76,7 @@ var dm = new DataManager(function()
     //#######################################################  Popular words today  #############
 
     rest.get('/api/popularwords/', function(req, rest) {
-        api.getMostPopularWordsOnDay(getToday(), function(result){
+        api.getMostPopularWordsOnDay(theBase.getToday(), function(result){
             return rest.ok(result.slice(0, maxReturnElements));
         });
     });
@@ -136,17 +118,13 @@ var dm = new DataManager(function()
     });*/
 
     //#######################################################  API END  #############
+}
 
-    var listener = exp.listen(3000, function(){
-        console.log('Listening on port ' + listener.address().port); //Listening on port 8888
-    });
-});
-
-function getToday(){
+module.exports.getToday = function(){
     return Math.floor(Date.now() / 1000 / 60 / 60 / 24);
 }
 
-function getWordsArray(str){
+module.exports.getWordsArray = function(str){
     var words = str.split(/[,\.\-#+^<´>|;:_'*~?=\")(/&%$§!) ]+/);
         
     for(var i = 0; i < words.length; i++)

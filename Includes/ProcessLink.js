@@ -1,28 +1,9 @@
-var sources = require("./data/sources.json");
-var articles = require("./data/articles.json");
-
-var Download =  require('./Includes/Download.js');
-var ArticleScanner = require('./Includes/ArticleScanner.js');
-var LinkScanner = require('./Includes/LinkScanner.js');
-var Article = require('./Includes/Article.js');
-var Link = require('./Includes/Link.js');
-var DataManager = require('./Includes/DataManager.js');
+var Link = require('./Link.js');
+var DataManager = require('./DataManager.js');
 
 //End imports
 
-var dm = new DataManager(function(){
-    
-    dm.getUnprocessedLinks(function(link, linkId){
-
-        console.log("Processing link: " + linkId);
-        processLink(link, linkId);        
-
-    });
-
-    //dm.disconnect();
-});
-
-function processLink(link, linkId)
+module.exports.processLink = function (link, linkId, dm)
 {
     var words = link.getWords();
     var day = Math.floor(link.date / 60 / 60 / 24);
@@ -79,11 +60,11 @@ function processLink(link, linkId)
 
     dm.client.incrby("totalWordsCountBySource:"+link.sourceId, words.length);
     dm.client.incrby("totalWordsCount", words.length);
-    
+
     dm.client.zincrby("totalWordCountOnDay", words.length, day);
 }
 
-function checkValue(value, msg, extra)
+module.exports.checkValue = function(value, msg, extra)
 {
     if(value == null || value == '' || value == " " || typeof value === 'undefined' || value == false)
     {

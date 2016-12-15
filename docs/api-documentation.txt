@@ -10,6 +10,6 @@
 //Multiple
 /api/popularwordhistory/:word
 
-//As Query!
+//As Query
 /api/sameheadline/:word
 /api/sameheadline/:word/:day

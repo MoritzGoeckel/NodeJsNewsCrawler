@@ -20,4 +20,9 @@ var dm = new DataManager(function()
         console.log(result);
         dm.disconnect();
     });
+
+    //GetLinks
+    /*dm.getLinks(function(link){
+        console.log(link);
+    });*/
 });
