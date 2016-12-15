@@ -60,8 +60,8 @@ function doSearch(query){
             console.log(data);
 
             for(var i = 0; i < data.length; i++){
-                labels.push(data[i].date);
-                yData.push(data[i].wightedCount)
+                labels.push(daysToDate(data[i].date));
+                yData.push(data[i].wightedCount);
             }
             
             var data = {
@@ -98,6 +98,22 @@ function processUrl(url){
     //dail mail /home/index.html
 }
 
+function daysToDate(days){
+    var now = new Date();
+
+    var a = new Date(days * 24 * 60 * 60 * 1000);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var year = a.getFullYear() == now.getFullYear() ? "" : a.getFullYear();
+    var month = a.getMonth() == now.getMonth() && a.getFullYear() == now.getFullYear() ? "" : months[a.getMonth()];
+    
+    var date = a.getDate() == now.getDate() && a.getMonth() == now.getMonth() && a.getFullYear() == now.getFullYear() ? "Today" : a.getDate() + ".";
+    
+    if(a.getDate() == now.getDate() - 1 && a.getMonth() == now.getMonth() && a.getFullYear() == now.getFullYear())
+        date = "Yesterday";
+    
+    return date + ' ' + month + ' ' + year;
+}
+
 function secondsToDate(sec){
     var now = new Date();
 
@@ -113,7 +129,6 @@ function secondsToDate(sec){
 
     var hour = a.getHours();
     var min = a.getMinutes();
-    var sec = a.getSeconds();
-    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
-    return time;
+    //var sec = a.getSeconds();
+    return date + ' ' + month + ' ' + year + ' ' + hour + ':' + min;
 }
