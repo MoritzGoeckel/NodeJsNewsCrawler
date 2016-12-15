@@ -57,9 +57,11 @@ function doSearch(query){
             var labels = []; //Todo: Add real labels        
             var yData = [];
 
+            console.log(data);
+
             for(var i = 0; i < data.length; i++){
                 labels.push(data[i].date);
-                yData.push(data[i].count)
+                yData.push(data[i].wightedCount)
             }
             
             var data = {

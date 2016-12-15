@@ -14,5 +14,5 @@
     "currentScan:" : "currentScan:",
     "link:" : "link:",
     "lastProcessedLinkId:" : "lastProcessedLinkId:",
-    "totalWordCountOnDay:" : "totalWordCountOnDay:"
+    "totalWordCountOnDay" : "totalWordCountOnDay"
 }

@@ -8,9 +8,8 @@
 /api/popularwords/:day
 
 //Multiple
-//Normalize to words count per day
 /api/popularwordhistory/:word
 
-//As QUery!
+//As Query!
 /api/sameheadline/:word
 /api/sameheadline/:word/:day

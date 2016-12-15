@@ -87,16 +87,39 @@ module.exports = class DataAPI{
     //Todo: Multiple / Query
     getWordPopularityHistoryForWord(word, callback)
     {
+        var theBase = this;
         this.client.zrevrangebyscore("wordOnDate:" + word.toLowerCase(), "+inf", 1, 'withscores', function(err, reply){
             var result = [];
-            for(var i = 0; i < reply.length; i += 2)
+
+            function WightByWordCount(theBase, array, i, callback)
             {
-                //"totalWordCountOnDay:" + day
-                //Todo: normalize with words on day count
-                result.push({date: reply[i], count: reply[i+1]});
+                if(i < array.length)
+                    theBase.client.zscore("totalWordCountOnDay", array[i].date, function(err, totalCountOnDay){
+                        
+                        if(totalCountOnDay == 0 || totalCountOnDay == null)
+                            totalCountOnDay = 1;
+                        
+                        array[i].wightedCount = array[i].count / totalCountOnDay;
+
+                        WightByWordCount(theBase, array, i + 1, callback);
+                    });
+                else
+                    callback(array);
             }
 
-            callback(result);            
+            var dataArray = [];
+            for(var i = 0; i < reply.length; i += 2)
+            {
+                var day = reply[i];
+                var countOnDay = reply[i + 1];
+
+                dataArray.push({date: day, count: countOnDay});
+            }
+
+            WightByWordCount(theBase, dataArray, 0, function(output){
+                callback(output);
+            });
+
         });
     }
 
