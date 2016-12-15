@@ -79,6 +79,7 @@ function processLink(link, linkId)
 
     dm.client.incrby("totalWordsCountBySource:"+link.sourceId, words.length);
     dm.client.incrby("totalWordsCount", words.length);
+    dm.client.incrby("totalWordCountOnDay:" + day, words.length);
 }
 
 function checkValue(value, msg, extra)

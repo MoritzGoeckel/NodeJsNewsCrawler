@@ -1,12 +1,16 @@
 /api/search/:query
+/api/count/:word
+/api/link/:id
+/api/sources/
+
+//Use
 /api/rightneighbour/:word
+/api/popularwords/:day
+
+//Multiple
+//Normalize to words count per day
+/api/popularwordhistory/:word
 
 //As QUery!
 /api/sameheadline/:word
 /api/sameheadline/:word/:day
-
-/api/count/:word
-/api/popularwords/:day
-/api/popularwordhistory/:word
-/api/link/:id
-/api/sources/

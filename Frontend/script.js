@@ -55,15 +55,17 @@ function doSearch(query){
         {
             data = data.splice(0, 30);
             var labels = []; //Todo: Add real labels        
+            var yData = [];
 
             for(var i = 0; i < data.length; i++){
-                labels.push(i);
+                labels.push(data[i].date);
+                yData.push(data[i].count)
             }
             
             var data = {
                 labels: labels,
                 series: [
-                    data
+                    yData
                 ]
             };
 

@@ -11,7 +11,7 @@ var DataManager = require('./Includes/DataManager.js');
 //End imports
 
 var dm = new DataManager(function(){
-    
+
     var s = new LinkScanner(function(sourceId, links){
         //console.log("###### " + sourceId + " ######");
         //console.log(links.length);

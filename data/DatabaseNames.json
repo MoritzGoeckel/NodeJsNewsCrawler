@@ -13,5 +13,6 @@
     "oldBlacklist:" : "oldBlacklist:",
     "currentScan:" : "currentScan:",
     "link:" : "link:",
-    "lastProcessedLinkId:" : "lastProcessedLinkId:"
+    "lastProcessedLinkId:" : "lastProcessedLinkId:",
+    "totalWordCountOnDay:" : "totalWordCountOnDay:"
 }

@@ -24,7 +24,6 @@ module.exports = class DataAPI{
         }
     }
 
-    //Todo: Wight
     getRightNeighbourForWord(word, callback)
     {
         var theBase = this;
@@ -36,7 +35,7 @@ module.exports = class DataAPI{
         });    
     }
 
-    //Todo: Wight
+    //Todo: Multiple / Query
     getSameHeadlineForWord(word, callback)
     {
         var theBase = this;
@@ -48,7 +47,7 @@ module.exports = class DataAPI{
         });
     }
 
-    //Todo: Wight
+    //Todo: Multiple / Query
     getSameHeadlineCountForDayAndWord(day, word, callback)
     {
         var theBase = this;
@@ -74,7 +73,6 @@ module.exports = class DataAPI{
         });
     }
 
-    //Todo: Wight
     getMostPopularWordsOnDay(day, callback)
     {
         var theBase = this;
@@ -86,10 +84,19 @@ module.exports = class DataAPI{
         });
     }
 
+    //Todo: Multiple / Query
     getWordPopularityHistoryForWord(word, callback)
     {
         this.client.zrevrangebyscore("wordOnDate:" + word.toLowerCase(), "+inf", 1, 'withscores', function(err, reply){
-            callback(reply);
+            var result = [];
+            for(var i = 0; i < reply.length; i += 2)
+            {
+                //"totalWordCountOnDay:" + day
+                //Todo: normalize with words on day count
+                result.push({date: reply[i], count: reply[i+1]});
+            }
+
+            callback(result);            
         });
     }
 
@@ -117,9 +124,7 @@ module.exports = class DataAPI{
     getLinksToWords(words, callback)
     {
         var args = ["tmp", words.length];
-
         var wights = [];
-
 
         for(var i = 0; i < words.length; i++)
         {
@@ -143,8 +148,6 @@ module.exports = class DataAPI{
             
             for(var i = 0; i < wights.length; i++)
                 args.push(wights[i]);
-
-            //console.log(args);
 
             theBase.client.zunionstore(args, function(err, reply){
                 theBase.client.zrevrangebyscore("tmp", "+inf", 0, function(err, reply){ //'withscores'
