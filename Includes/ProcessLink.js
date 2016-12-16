@@ -5,6 +5,15 @@ var DataManager = require('./DataManager.js');
 
 module.exports.processLink = function (link, linkId, dm)
 {
+    function checkValue(value, msg, extra)
+    {
+        if(value == null || value == '' || value == " " || typeof value === 'undefined' || value == false)
+        {
+            console.log(extra);
+            console.log( "->" + msg );
+        }    
+    }
+
     var words = link.getWords();
     var day = Math.floor(link.date / 60 / 60 / 24);
     checkValue(day, "day", day);
@@ -62,13 +71,4 @@ module.exports.processLink = function (link, linkId, dm)
     dm.client.incrby("totalWordsCount", words.length);
 
     dm.client.zincrby("totalWordCountOnDay", words.length, day);
-}
-
-module.exports.checkValue = function(value, msg, extra)
-{
-    if(value == null || value == '' || value == " " || typeof value === 'undefined' || value == false)
-    {
-        console.log(extra);
-        console.log( "->" + msg );
-    }    
 }
