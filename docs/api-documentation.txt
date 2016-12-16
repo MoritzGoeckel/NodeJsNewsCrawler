@@ -2,6 +2,7 @@
 /api/count/:word
 /api/link/:id
 /api/sources/
+/api/sameheadline/:word
 
 //Use
 /api/rightneighbour/:word
@@ -11,5 +12,4 @@
 /api/popularwordhistory/:word
 
 //As Query
-/api/sameheadline/:word
 /api/sameheadline/:word/:day

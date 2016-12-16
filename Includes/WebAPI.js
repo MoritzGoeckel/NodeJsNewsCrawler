@@ -43,8 +43,9 @@ module.exports.createWebApi = function(exp, rest, api, maxReturnElements, source
 
     //#######################################################  Same headline  #############
 
-    rest.get('/api/sameheadline/:word', function(req, rest) {
-        api.getSameHeadlineForWord(req.params.word.toLowerCase(), function(result){
+    rest.get('/api/sameheadline/:query', function(req, rest) {
+        var words = theBase.getWordsArray(req.params.query);
+        api.getSameHeadlineForWord(words, function(result){
             return rest.ok(result.slice(0, maxReturnElements));
         });
     });
