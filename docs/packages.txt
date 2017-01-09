@@ -7,3 +7,7 @@ npm install express-rest
 
 npm install node-schedule
 (https://www.npmjs.com/package/node-schedule)
+
+nuget Install-Package Redis-64
+
+https://github.com/rgl/redis/downloads

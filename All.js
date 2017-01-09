@@ -29,6 +29,22 @@ var dm = new DataManager(function()
 
     WebApi.createWebApi(exp, rest, api, 200, Sources);
 
+    var downloadLinks = function(){
+        //DownloadLinks, send to scanner
+        for (i = 0; i < Sources.length; i++)
+        {
+            console.log("Download: " + Sources[i].name);
+            new Download(s, Sources[i].id, Sources[i].url);
+        }
+    };
+
+    var processLinks = function(){
+        dm.getUnprocessedLinks(function(link, linkId){
+            console.log("Processing link: " + linkId);
+            ProcessLink.processLink(link, linkId, dm);        
+        });
+    };
+
     var listener = exp.listen(3000, function(){
         console.log('Listening on port ' + listener.address().port); //Listening on port 8888
     });
@@ -39,33 +55,23 @@ var dm = new DataManager(function()
     });
 
     //Every hour
-    Schedule.scheduleJob('0 * * * *', function(){
-        //DownloadLinks, send to scanner
-        for (i = 0; i < Sources.length; i++)
-        {
-            console.log("Download: " + Sources[i].name);
-            new Download(s, Sources[i].id, Sources[i].url);
-        }
-    });
+    Schedule.scheduleJob('0 * * * *', downloadLinks);
+    Schedule.scheduleJob('30 * * * *', downloadLinks);
 
     //Every hour
-    Schedule.scheduleJob('10 * * * *', function(){
-        //ProcessLinks
-        dm.getUnprocessedLinks(function(link, linkId){
-            console.log("Processing link: " + linkId);
-            ProcessLink.processLink(link, linkId, dm);        
-        });
-    });
+    Schedule.scheduleJob('10 * * * *', processLinks);
 
     //Every two days
     Schedule.scheduleJob('15 23 */2 * *', function(){
         //RolloverBlacklist
-        for (i = 0; i < sources.length; i++)
+        for (i = 0; i < Sources.length; i++)
         {
             console.log("Switching blacklist: " + Sources[i].name);
             dm.rolloverBlacklist(Sources[i].id);        
         }    
     });
+
+    downloadLinks();
 
     //dm.disconnect();
 });
