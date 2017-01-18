@@ -1,37 +1,37 @@
 process.env.UV_THREADPOOL_SIZE = 10;
 
-var Sources = require("./data/sources.json");
-//var Articles = require("./data/articles.json");
+let Sources = require("./data/sources.json");
+//let Articles = require("./data/articles.json");
 
-var Download =  require('./Includes/Download.js');
-var ArticleScanner = require('./Includes/ArticleScanner.js');
-var LinkScanner = require('./Includes/LinkScanner.js');
-var Article = require('./Includes/Article.js');
-var Link = require('./Includes/Link.js');
-var DataManager = require('./Includes/DataManager.js');
+let Download =  require('./Includes/Download.js');
+let ArticleScanner = require('./Includes/ArticleScanner.js');
+let LinkScanner = require('./Includes/LinkScanner.js');
+let Article = require('./Includes/Article.js');
+let Link = require('./Includes/Link.js');
+let DataManager = require('./Includes/DataManager.js');
 
-var DataAPI = require('./Includes/DataAPI.js');
+let DataAPI = require('./Includes/DataAPI.js');
 
-var Express = require('express');
-var ExpressRest = require('express-rest');
+let Express = require('express');
+let ExpressRest = require('express-rest');
  
-var WebApi = require('./Includes/WebAPI.js');
-var ProcessLink = require('./Includes/ProcessLink.js');
+let WebApi = require('./Includes/WebAPI.js');
+let ProcessLink = require('./Includes/ProcessLink.js');
 
-var Schedule = require('node-schedule');
+let Schedule = require('node-schedule');
 
 //End imports
 
-var dm = new DataManager(function()
+let dm = new DataManager(function()
 {
-    var api = new DataAPI(dm.client);
+    let api = new DataAPI(dm.client);
     
-    var exp = Express();
-    var rest = ExpressRest(exp);
+    let exp = Express();
+    let rest = ExpressRest(exp);
 
     WebApi.createWebApi(exp, rest, api, 200, Sources);
 
-    var downloadLinks = function(){
+    let downloadLinks = function(){
         //DownloadLinks, send to scanner
         for (i = 0; i < Sources.length; i++)
         {
@@ -40,7 +40,7 @@ var dm = new DataManager(function()
         }
     };
 
-    var processLinks = function(){
+    let processLinks = function(){
         dm.getArticleToProcess(function(link, id){
             console.log("Process: " + id);
             ProcessLink.processLink(link, id, dm);
@@ -48,12 +48,12 @@ var dm = new DataManager(function()
         });
     };
 
-    var listener = exp.listen(3000, function(){
+    let listener = exp.listen(3000, function(){
         console.log('Listening on port ' + listener.address().port); //Listening on port 8888
     });
 
     //LinkScanner for Download
-    var s = new LinkScanner(function(sourceId, links){
+    let s = new LinkScanner(function(sourceId, links){
         dm.saveCurrentScan(sourceId, links);
     });
 
@@ -75,7 +75,7 @@ var dm = new DataManager(function()
     });
 
     downloadLinks();
-    setTimeout(processLinks, 1000 * 60);
+    setTimeout(processLinks, 1000 * 10);
 
     //dm.disconnect();
 });

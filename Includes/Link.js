@@ -34,9 +34,9 @@ module.exports = class Link{
 
     getWords()
     {
-        var words = this.title.split(/[,\.\-#+^<´>|;:_'*~?=\")(/&%$§!) ]+/);
+        let words = this.title.split(/[,\.\-#+^<´>|;:_'*~?=\")(/&%$§!) ]+/);
         
-        for(var i = 0; i < words.length; i++)
+        for(let i = 0; i < words.length; i++)
         {
             if(words[i] == false || words[i] == null || words[i] == '' || words[i] == ' ' || typeof words[i] === 'undefined' || words[i] == " ")
             {
@@ -48,7 +48,7 @@ module.exports = class Link{
         }
         
         function removeDoubleElements(a) {
-            var seen = {};
+            let seen = {};
             return a.filter(function(item) {
                 return seen.hasOwnProperty(item) ? false : (seen[item] = true);
             });

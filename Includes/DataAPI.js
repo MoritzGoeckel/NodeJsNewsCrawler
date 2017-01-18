@@ -1,4 +1,4 @@
-var Link = require('./Link.js');
+let Link = require('./Link.js');
 
 module.exports = class DataAPI{
 
@@ -11,10 +11,10 @@ module.exports = class DataAPI{
     {
         if(i < inputArray.length)
         {
-            var word = inputArray[i];
-            var count = inputArray[i + 1];
+            let word = inputArray[i];
+            let count = inputArray[i + 1];
             theBase.getTotalCountForWord(word, function(totalCount){
-                var score = parseFloat(count) / totalCount; //Todo: better formula?
+                let score = parseFloat(count) / totalCount; //Todo: better formula?
 
                 outputArray.push({word: word, count: parseFloat(count), totalCount: totalCount, score: score}); 
                 theBase.buildWightedWords(inputArray, outputArray, i + 2, theBase, callback);
@@ -49,9 +49,9 @@ module.exports = class DataAPI{
 
     getNeighbourInternal(query, callback)
     {
-        var theBase = this;
+        let theBase = this;
         this.client.zrevrangebyscore(query, "+inf", 0, 'withscores', function(err, reply){
-            var words = [];
+            let words = [];
             theBase.buildWightedWords(reply, words, 0, theBase, function(result){ //Todo: really wighted?
                 callback(result);
             });
@@ -60,14 +60,14 @@ module.exports = class DataAPI{
 
     getSameHeadlineForWord(words, callback)
     {
-        var tableName = Math.random() * 100000;
+        let tableName = Math.random() * 100000;
         tableName = "tmp_" + tableName + "_SameHeadline_" + words.join("-");
 
-        var theBase = this;
-        var args = [tableName, words.length];
-        var wights = [];
+        let theBase = this;
+        let args = [tableName, words.length];
+        let wights = [];
 
-        for(var i = 0; i < words.length; i++)
+        for(let i = 0; i < words.length; i++)
         {
             args.push("sameHeadlineCount:" + words[i].toLowerCase());
         }
@@ -87,15 +87,15 @@ module.exports = class DataAPI{
         buildWightsArray(0, this, function(theBase){
             args.push('WEIGHTS');
             
-            for(var i = 0; i < wights.length; i++)
+            for(let i = 0; i < wights.length; i++)
                 args.push(wights[i]);
 
             theBase.client.zunionstore(args, function(err, reply){
                 theBase.client.zrevrangebyscore(tableName, "+inf", 0, 'withscores', function(err, reply){ //'withscores'
                     theBase.client.del(tableName); //Todo: Cacheing maybe? Different name
                     
-                    var output = [];
-                    for(var i = 0; i < reply.length; i +=2)
+                    let output = [];
+                    for(let i = 0; i < reply.length; i +=2)
                         output.push({word: reply[i], score:reply[i + 1]});
                     
                     //Wight by word
@@ -123,14 +123,14 @@ module.exports = class DataAPI{
     //Todo: Refactore duplicated code
     getSameHeadlineCountForDayAndWord(day, words, callback)
     {
-        var tableName = Math.random() * 100000;
+        let tableName = Math.random() * 100000;
         tableName = "tmp_" + tableName + "_SameHeadlineDayWord_" + day + "_" + words.join("-");
 
-        var theBase = this;
-        var args = [tableName, words.length];
-        var wights = [];
+        let theBase = this;
+        let args = [tableName, words.length];
+        let wights = [];
 
-        for(var i = 0; i < words.length; i++)
+        for(let i = 0; i < words.length; i++)
         {
             args.push("daySameHeadlineCount:" + day + ":" + words[i].toLowerCase());
         }
@@ -150,15 +150,15 @@ module.exports = class DataAPI{
         buildWightsArray(0, this, function(theBase){
             args.push('WEIGHTS');
             
-            for(var i = 0; i < wights.length; i++)
+            for(let i = 0; i < wights.length; i++)
                 args.push(wights[i]);
 
             theBase.client.zunionstore(args, function(err, reply){
                 theBase.client.zrevrangebyscore(tableName, "+inf", 0, 'withscores', function(err, reply){ //'withscores'
                     theBase.client.del(tableName); //Todo: Cacheing maybe? Different name
                     
-                    var output = [];
-                    for(var i = 0; i < reply.length; i +=2)
+                    let output = [];
+                    for(let i = 0; i < reply.length; i +=2)
                         output.push({word: reply[i], score:reply[i + 1]});
                     
                     //Wight by word
@@ -183,9 +183,9 @@ module.exports = class DataAPI{
         });
 
         //###################################################################
-        /*var theBase = this;
+        /*let theBase = this;
         this.client.zrevrangebyscore("daySameHeadlineCount:" + day + ":" + word.toLowerCase(), "+inf", 0, 'withscores', function(err, reply){
-            var words = [];
+            let words = [];
             theBase.buildWightedWords(reply, words, 0, theBase, function(result){
                 callback(result);
             });
@@ -208,9 +208,9 @@ module.exports = class DataAPI{
 
     getMostPopularWordsOnDay(day, minAmount, callback)
     {
-        var theBase = this;
+        let theBase = this;
         this.client.zrevrangebyscore("dayWordCount:" + day, "+inf", minAmount, 'withscores', function(err, reply){
-            var words = [];
+            let words = [];
             theBase.buildWightedWords(reply, words, 0, theBase, function(result){
                 callback(result);
             });
@@ -220,9 +220,9 @@ module.exports = class DataAPI{
     //Todo: Multiple / Query
     getWordPopularityHistoryForWord(word, callback)
     {
-        var theBase = this;
+        let theBase = this;
         this.client.zrevrangebyscore("wordOnDate:" + word.toLowerCase(), "+inf", 1, 'withscores', function(err, reply){
-            var result = [];
+            let result = [];
 
             function WightByWordCount(theBase, array, i, callback)
             {
@@ -240,11 +240,11 @@ module.exports = class DataAPI{
                     callback(array);
             }
 
-            var dataArray = [];
-            for(var i = 0; i < reply.length; i += 2)
+            let dataArray = [];
+            for(let i = 0; i < reply.length; i += 2)
             {
-                var day = reply[i];
-                var countOnDay = reply[i + 1];
+                let day = reply[i];
+                let countOnDay = reply[i + 1];
 
                 dataArray.push({date: day, count: countOnDay});
             }
@@ -279,10 +279,10 @@ module.exports = class DataAPI{
 
     getLinksToWords(words, callback)
     {
-        var args = ["tmp", words.length];
-        var wights = [];
+        let args = ["tmp", words.length];
+        let wights = [];
 
-        for(var i = 0; i < words.length; i++)
+        for(let i = 0; i < words.length; i++)
         {
             args.push("invIndex:" + words[i].toLowerCase());
         }
@@ -302,7 +302,7 @@ module.exports = class DataAPI{
         buildWightsArray(0, this, function(theBase){
             args.push('WEIGHTS');
             
-            for(var i = 0; i < wights.length; i++)
+            for(let i = 0; i < wights.length; i++)
                 args.push(wights[i]);
 
             theBase.client.zunionstore(args, function(err, reply){

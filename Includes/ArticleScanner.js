@@ -1,5 +1,5 @@
-var cheerio = require('cheerio');
-var Article = require('./Article.js');
+let cheerio = require('cheerio');
+let Article = require('./Article.js');
 
 module.exports = class ArticleScanner{
 
@@ -12,7 +12,7 @@ module.exports = class ArticleScanner{
 
     getDate($)
     {
-        var date = $("meta[property='article:published_time']").attr("content");
+        let date = $("meta[property='article:published_time']").attr("content");
         if(typeof date != 'undefined' && date != null && date != "")
         {
             console.log("Date -> Method 1 -> " + date);
@@ -42,7 +42,7 @@ module.exports = class ArticleScanner{
 
         //Article
         
-        var a = new Article($("meta[property='og:title']").attr("content"),
+        let a = new Article($("meta[property='og:title']").attr("content"),
         $("meta[property='og:description']").attr("content"),
         $("meta[property='og:image']").attr("content"),
         this.getDate($),

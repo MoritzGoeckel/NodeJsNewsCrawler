@@ -1,4 +1,4 @@
-var request = require('request');
+let request = require('request');
 
 module.exports = class Download{
 
@@ -9,7 +9,7 @@ module.exports = class Download{
         this.source = source;
         this.url = url;
 
-        var options = {
+        let options = {
             url: this.url,
             headers: {
                 'User-Agent': 'request'

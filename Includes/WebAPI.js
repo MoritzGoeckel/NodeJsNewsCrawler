@@ -1,19 +1,19 @@
-var express = require('express');
-var expressRest = require('express-rest');
+let express = require('express');
+let expressRest = require('express-rest');
 
-var Link = require('./Link.js');
+let Link = require('./Link.js');
 
 module.exports.createWebApi = function(exp, rest, api, maxReturnElements, sources)
 {
-    var theBase = this;
+    let theBase = this;
 
     exp.use(express.static('Frontend'));
 
     //#######################################################  Search  #############
     rest.get('/api/search/:query', function(req, rest) {
-        var words = theBase.getWordsArray(req.params.query);
+        let words = theBase.getWordsArray(req.params.query);
         api.getLinksToWords(words, function(result){
-            var links = [];
+            let links = [];
             function buildLinkList(i, count, callback)
             {
                 if(i < result.length && i < count)
@@ -68,7 +68,7 @@ module.exports.createWebApi = function(exp, rest, api, maxReturnElements, source
     //#######################################################  Same headline  #############
 
     rest.get('/api/sameheadline/:query', function(req, rest) {
-        var words = theBase.getWordsArray(req.params.query);
+        let words = theBase.getWordsArray(req.params.query);
         api.getSameHeadlineForWord(words, function(result){
             return rest.ok(result.slice(0, maxReturnElements));
         });
@@ -77,7 +77,7 @@ module.exports.createWebApi = function(exp, rest, api, maxReturnElements, source
     //#######################################################  Same headline on day  #############
 
     rest.get('/api/sameheadline/:query/:day', function(req, rest) {
-        var words = theBase.getWordsArray(req.params.query);
+        let words = theBase.getWordsArray(req.params.query);
         api.getSameHeadlineCountForDayAndWord(req.params.day, words, function(result){
             return rest.ok(result.slice(0, maxReturnElements));
         });
@@ -127,8 +127,8 @@ module.exports.createWebApi = function(exp, rest, api, maxReturnElements, source
 
     rest.get('/api/sources/', function(req, rest) {
         
-        var output = {};
-        for(var i = 0; i < sources.length; i++)
+        let output = {};
+        for(let i = 0; i < sources.length; i++)
         {
             output[sources[i].id] = sources[i];
         }
@@ -151,9 +151,9 @@ module.exports.getToday = function(){
 }
 
 module.exports.getWordsArray = function(str){
-    var words = str.split(/[,\.\-#+^<´>|;:_'*~?=\")(/&%$§!) ]+/);
+    let words = str.split(/[,\.\-#+^<´>|;:_'*~?=\")(/&%$§!) ]+/);
         
-    for(var i = 0; i < words.length; i++)
+    for(let i = 0; i < words.length; i++)
     {
         if(words[i] == false || words[i] == null || words[i] == '' || words[i] == ' ' || typeof words[i] === 'undefined' || words[i] == " ")
         {
@@ -165,7 +165,7 @@ module.exports.getWordsArray = function(str){
     }
     
     function removeDoubleElements(a) {
-        var seen = {};
+        let seen = {};
         return a.filter(function(item) {
             return seen.hasOwnProperty(item) ? false : (seen[item] = true);
         });

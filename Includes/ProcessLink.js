@@ -1,5 +1,5 @@
-var Link = require('./Link.js');
-var DataManager = require('./DataManager.js');
+let Link = require('./Link.js');
+let DataManager = require('./DataManager.js');
 
 //End imports
 
@@ -15,13 +15,13 @@ module.exports.processLink = function (link, linkId, dm)
         }    
     }
 
-    var words = link.getWords();
-    var day = Math.floor(link.date / 60 / 60 / 24);
+    let words = link.getWords();
+    let day = Math.floor(link.date / 60 / 60 / 24);
     checkValue(day, "day", day);
 
-    for(var i = 0; i < words.length; i++)
+    for(let i = 0; i < words.length; i++)
     {
-        var word = words[i];
+        let word = words[i];
 
         checkValue(word, "word", words);
 
@@ -35,7 +35,7 @@ module.exports.processLink = function (link, linkId, dm)
         dm.client.zincrby("wordOnDate:" + word, 1, day); 
 
         //The word that occures right of a given word
-        var rightWord = "#end#";
+        let rightWord = "#end#";
 
         if(i+1 < words.length)
             rightWord = words[i + 1];
@@ -46,7 +46,7 @@ module.exports.processLink = function (link, linkId, dm)
         dm.client.zincrby("rnWordsOnDay:" + word + ":" + day, 1, rightWord);            
         
         //The word that occures left of the given word
-         var leftWord = "#beginning#";
+         let leftWord = "#beginning#";
         if(i-1 >= 0)
             leftWord = words[i - 1];
 
@@ -60,12 +60,12 @@ module.exports.processLink = function (link, linkId, dm)
     }
 
     //Same headline count
-    for(var i = 0; i < words.length; i++)
+    for(let i = 0; i < words.length; i++)
     {
-        var firstWord = words[i];
-        for(var j = i + 1; j < words.length; j++)
+        let firstWord = words[i];
+        for(let j = i + 1; j < words.length; j++)
         {
-            var secondWord = words[j];
+            let secondWord = words[j];
 
             checkValue(firstWord, "firstWord", firstWord);
             checkValue(secondWord, "secondWord", secondWord);

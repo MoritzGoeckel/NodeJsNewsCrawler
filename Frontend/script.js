@@ -16,7 +16,7 @@ $(document).ready(function(){
     }); 
 
     $.getJSON( "/api/popularwords/", function( data ) {
-        var output = "";
+        let output = "";
          $.each(data, function( index ) {
             //console.log(index);
             if(index < 60)
@@ -29,7 +29,7 @@ $(document).ready(function(){
 function doSearch(query){
 
     $.getJSON("/api/sameheadline/" + query, function( data ) {
-        var output = "";
+        let output = "";
 
         data = data.splice(0, 35);
 
@@ -49,7 +49,7 @@ function doSearch(query){
     });
 
     $.getJSON("/api/sameheadline/" + query + "/" + getDateToday(), function( data ) {
-        var output = "";
+        let output = "";
 
         data = data.splice(0, 35);
 
@@ -69,7 +69,7 @@ function doSearch(query){
     });
 
     $.getJSON("/api/search/" + query, function( data ) {
-        var output = '<div class="list-group-item"><h3 class="list-group-item-heading">Articles</h3></div>';
+        let output = '<div class="list-group-item"><h3 class="list-group-item-heading">Articles</h3></div>';
         $.each(data, function( key, val ) {
             output += '<a onclick="onclicksearch(this)" href="' + processUrl(val.url) + '" target="_blank" class="list-group-item">'
                 + '<h4 class="list-group-item-heading">' + val.title + '</h4>'
@@ -83,26 +83,25 @@ function doSearch(query){
     $.getJSON("/api/popularwordhistory/" + query, function( data ) {   
         if(data.length != 0)
         {
-            data = data.sort(function(a, b){return a.date - b.date});            
-            data = data.splice(0, 30);
-            var labels = [];      
-            var yData = [];
+            let sortedData = data.sort(function(a, b){return a.date - b.date});            
+            sortedData = sortedData.splice(0, 30);
 
-            console.log(data);
+            let labels = [];      
+            let yData = [];
 
-            for(var i = 0; i < data.length; i++){
-                labels.push(daysToDate(data[i].date));
-                yData.push(data[i].wightedCount);
+            for(let i = 0; i < sortedData.length; i++){
+                labels.push(daysToDate(sortedData[i].date));
+                yData.push(sortedData[i].wightedCount);
             }
             
-            var data = {
+            let chartInput = {
                 labels: labels,
                 series: [
                     yData
                 ]
             };
 
-            new Chartist.Line('.ct-chart', data);
+            new Chartist.Line('.ct-chart', chartInput);
             $("#history_wrapper").show();            
         }
         else
@@ -130,14 +129,14 @@ function processUrl(url){
 }
 
 function daysToDate(days){
-    var now = new Date();
+    let now = new Date();
 
-    var a = new Date(days * 24 * 60 * 60 * 1000);
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var year = a.getFullYear() == now.getFullYear() ? "" : a.getFullYear();
-    var month = a.getMonth() == now.getMonth() && a.getFullYear() == now.getFullYear() ? "" : months[a.getMonth()];
+    let a = new Date(days * 24 * 60 * 60 * 1000);
+    let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    let year = a.getFullYear() == now.getFullYear() ? "" : a.getFullYear();
+    let month = a.getMonth() == now.getMonth() && a.getFullYear() == now.getFullYear() ? "" : months[a.getMonth()];
     
-    var date = a.getDate() == now.getDate() && a.getMonth() == now.getMonth() && a.getFullYear() == now.getFullYear() ? "Today" : a.getDate() + ".";
+    let date = a.getDate() == now.getDate() && a.getMonth() == now.getMonth() && a.getFullYear() == now.getFullYear() ? "Today" : a.getDate() + ".";
     
     if(a.getDate() == now.getDate() - 1 && a.getMonth() == now.getMonth() && a.getFullYear() == now.getFullYear())
         date = "Yesterday";
@@ -146,21 +145,21 @@ function daysToDate(days){
 }
 
 function secondsToDate(sec){
-    var now = new Date();
+    let now = new Date();
 
-    var a = new Date(sec * 1000);
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var year = a.getFullYear() == now.getFullYear() ? "" : a.getFullYear();
-    var month = a.getMonth() == now.getMonth() && a.getFullYear() == now.getFullYear() ? "" : months[a.getMonth()];
+    let a = new Date(sec * 1000);
+    let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    let year = a.getFullYear() == now.getFullYear() ? "" : a.getFullYear();
+    let month = a.getMonth() == now.getMonth() && a.getFullYear() == now.getFullYear() ? "" : months[a.getMonth()];
     
-    var date = a.getDate() == now.getDate() && a.getMonth() == now.getMonth() && a.getFullYear() == now.getFullYear() ? "Today" : a.getDate() + ".";
+    let date = a.getDate() == now.getDate() && a.getMonth() == now.getMonth() && a.getFullYear() == now.getFullYear() ? "Today" : a.getDate() + ".";
     
     if(a.getDate() == now.getDate() - 1 && a.getMonth() == now.getMonth() && a.getFullYear() == now.getFullYear())
         date = "Yesterday";
 
-    var hour = a.getHours();
-    var min = a.getMinutes();
-    //var sec = a.getSeconds();
+    let hour = a.getHours();
+    let min = a.getMinutes();
+    //let sec = a.getSeconds();
     return date + ' ' + month + ' ' + year + ' ' + hour + ':' + min;
 }
 

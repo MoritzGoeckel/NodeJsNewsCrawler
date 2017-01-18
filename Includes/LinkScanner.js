@@ -1,5 +1,5 @@
-var cheerio = require('cheerio');
-var Link = require('./Link.js');
+let cheerio = require('cheerio');
+let Link = require('./Link.js');
 
 module.exports = class LinkScanner{
 
@@ -10,29 +10,29 @@ module.exports = class LinkScanner{
     
     onGotPage(html, sourceId, url)
     {
-        var links = [];
+        let links = [];
         
         let $ = cheerio.load(html);
         
-        var time = Math.floor(Date.now() / 1000);
+        let time = Math.floor(Date.now() / 1000);
 
         //$(".headline a").css('background-color', 'red');
         //$("h1 a").css('background-color', 'red');
         //Todo: crawling component
 
-        var foundLinks = 0;
+        let foundLinks = 0;
 
-        var theBase = this;
+        let theBase = this;
 
         $("a").each(function( index ) {
             if($( this ).text().length > 20 && ($(this).text().match(/([\S]( |-)[\S])/g)||[]).length > 2)
             {
-                var fullUrl = $(this).attr("href");
-                var r = new RegExp('^(?:[a-z]+:)?//', 'i');
+                let fullUrl = $(this).attr("href");
+                let r = new RegExp('^(?:[a-z]+:)?//', 'i');
                 if(r.test(fullUrl) == false)
                     fullUrl = url + fullUrl;
                 
-                var link = new Link(theBase.processTitle($(this).text()), time, fullUrl, sourceId);
+                let link = new Link(theBase.processTitle($(this).text()), time, fullUrl, sourceId);
                 if(link.isValid())
                 {
                     links.push(link);
@@ -46,11 +46,11 @@ module.exports = class LinkScanner{
 
     processTitle(title)
     {
-        var p = "";
-        var prohibitedChars = ["\n", "\r\n", "\r", "\t", "‘", "’"];
+        let p = "";
+        let prohibitedChars = ["\n", "\r\n", "\r", "\t", "‘", "’"];
         
-        var lastChar = " ";
-        for(var i = 0; i < title.length; i++)
+        let lastChar = " ";
+        for(let i = 0; i < title.length; i++)
         {
             if(prohibitedChars.indexOf(title[i]) == -1 && (lastChar != " " || title[i] != " "))
             {

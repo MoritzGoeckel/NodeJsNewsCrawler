@@ -1,12 +1,12 @@
-var redis = require('redis');
+let redis = require('redis');
 
-//var Article = require('./Article.js');
-var Link = require('./Link.js');
+//let Article = require('./Article.js');
+let Link = require('./Link.js');
 
 module.exports = class DataManager{
     constructor(finishedInit)
     {
-        var theBase = this;
+        let theBase = this;
         this.client = redis.createClient();        
         this.client.on('connect', function() {
             console.log('Redis connected');
@@ -31,19 +31,19 @@ module.exports = class DataManager{
 
     saveCurrentScan(sourceId, links)
     {
-        var linkUrls = [];
-        var linksViaUrls = [];
+        let linkUrls = [];
+        let linksViaUrls = [];
 
-        for(var i in links)
+        for(let i in links)
         {
             linkUrls.push(links[i].url);
             linksViaUrls[links[i].url] = links[i];
         }
 
-        var theBase = this;
-        var blacklistName = 'blacklist:' + sourceId;
-        var oldBlacklistName = 'oldBlacklist:' + sourceId;
-        var currentScanName = 'currentScan:' + sourceId;
+        let theBase = this;
+        let blacklistName = 'blacklist:' + sourceId;
+        let oldBlacklistName = 'oldBlacklist:' + sourceId;
+        let currentScanName = 'currentScan:' + sourceId;
         
         theBase.client.sadd(currentScanName, linkUrls, function(err, reply) {
             //console.log("Added to " + currentScanName + ": " + reply);
@@ -51,12 +51,12 @@ module.exports = class DataManager{
                 
                 console.log("New for " + sourceId + ": " + reply.length);
 
-                for(var i in reply)
+                for(let i in reply)
                 {
-                    var url = reply[i];
-                    var link = linksViaUrls[url]
-                    var id = theBase.lastLinkId++;
-                    var data = link.getDataArray();
+                    let url = reply[i];
+                    let link = linksViaUrls[url]
+                    let id = theBase.lastLinkId++;
+                    let data = link.getDataArray();
                     data.push('id', id);
 
                     theBase.client.hmset("link:" + id, data);
@@ -83,9 +83,9 @@ module.exports = class DataManager{
     
     rolloverBlacklist(sourceId)
     {
-        var blacklistName = 'blacklist:' + sourceId;
-        var oldBlacklistName = 'oldBlacklist:' + sourceId;
-        var theBase = this;
+        let blacklistName = 'blacklist:' + sourceId;
+        let oldBlacklistName = 'oldBlacklist:' + sourceId;
+        let theBase = this;
 
         this.client.del(oldBlacklistName, function(err, reply){
             console.log("Deleted old blacklist " + reply + " | " + err);
@@ -97,7 +97,7 @@ module.exports = class DataManager{
 
     getArticleToProcess(callback)
     {
-        var theBase = this;
+        let theBase = this;
         theBase.client.get('lastProcessedLinkId', function(err, reply) {
             if(typeof reply == 'undefined' || reply == null){
                 theBase.client.set('lastProcessedLinkId', '0');
@@ -109,7 +109,7 @@ module.exports = class DataManager{
                 theBase.lastProcessedLinkId = parseInt(reply);
             }
 
-            var nextId = theBase.lastProcessedLinkId + 1;
+            let nextId = theBase.lastProcessedLinkId + 1;
             theBase.client.hgetall("link:" + nextId, function(err, reply) {
                 if(reply != null){
                     callback(new Link(reply.title, reply.date, reply.url, reply.sourceId), reply.id);
@@ -125,7 +125,7 @@ module.exports = class DataManager{
 
     /*getLinks(linkArrived)
     {
-        for(var i = 0; i < this.lastLinkId; i++)
+        for(let i = 0; i < this.lastLinkId; i++)
         {
             this.client.hgetall("link:"+i, function(err, reply) {
                 if(reply != null)
@@ -141,9 +141,9 @@ module.exports = class DataManager{
 
     cleanSlate()
     {
-        var theBase = this;
+        let theBase = this;
         this.client.keys('*', function (err, keys) {
-            for(var i = 0, len = keys.length; i < len; i++) {
+            for(let i = 0, len = keys.length; i < len; i++) {
                 theBase.client.del(keys[i], function(err, reply){
                     console.log("Deleted: " + keys[i] + " | " + reply + " | " + err);
                 });
@@ -153,9 +153,9 @@ module.exports = class DataManager{
 
     deleteRedundancies()
     {
-        var theBase = this;
+        let theBase = this;
         this.client.keys('*', function (err, keys) {
-            for(var i = 0, len = keys.length; i < len; i++) {
+            for(let i = 0, len = keys.length; i < len; i++) {
                 if(keys[i] != "lastLinkId" && keys[i].startsWith("blacklist:") == false && keys[i].startsWith("oldBlacklist:") == false && keys[i].startsWith("link:") == false)
                 {
                     //console.log("To delete: " + keys[i]);
