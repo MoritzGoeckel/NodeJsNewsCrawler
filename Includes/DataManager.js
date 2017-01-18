@@ -23,6 +23,7 @@ module.exports = class DataManager{
                     theBase.lastLinkId = parseInt(reply);
                 }
 
+                console.log("");
                 finishedInit();
             });
         });        

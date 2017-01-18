@@ -29,22 +29,22 @@ module.exports = class DataAPI{
 
     getRightNeighbourForWord(word, callback)
     {
-        getNeighbourInternal("rnWords:" + word.toLowerCase(), callback);
+        this.getNeighbourInternal("rnWords:" + word.toLowerCase(), callback);
     }
 
     getRightNeighbourForWordOnDay(word, day, callback)
     {
-        getNeighbourInternal("rnWordsOnDay:" + word.toLowerCase() + ":" + day, callback);
+        this.getNeighbourInternal("rnWordsOnDay:" + word.toLowerCase() + ":" + day, callback);
     }
 
     getLeftNeighbourForWord(word, callback)
     {
-        getNeighbourInternal("lnWords:" + word.toLowerCase(), callback);
+        this.getNeighbourInternal("lnWords:" + word.toLowerCase(), callback);
     }
 
     getLeftNeighbourForWordOnDay(word, day, callback)
     {
-        getNeighbourInternal("lnWordsOnDay:" + word.toLowerCase() + ":" + day, callback);
+        this.getNeighbourInternal("lnWordsOnDay:" + word.toLowerCase() + ":" + day, callback);
     }
 
     getNeighbourInternal(query, callback)
@@ -206,10 +206,10 @@ module.exports = class DataAPI{
         });
     }
 
-    getMostPopularWordsOnDay(day, callback)
+    getMostPopularWordsOnDay(day, minAmount, callback)
     {
         var theBase = this;
-        this.client.zrevrangebyscore("dayWordCount:" + day, "+inf", 10, 'withscores', function(err, reply){ //todo: 10 is hardcoded
+        this.client.zrevrangebyscore("dayWordCount:" + day, "+inf", minAmount, 'withscores', function(err, reply){
             var words = [];
             theBase.buildWightedWords(reply, words, 0, theBase, function(result){
                 callback(result);

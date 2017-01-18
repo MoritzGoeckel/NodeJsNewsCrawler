@@ -94,7 +94,7 @@ module.exports.createWebApi = function(exp, rest, api, maxReturnElements, source
     //#######################################################  Popular words on day  #############
 
     rest.get('/api/popularwords/:day', function(req, rest) {
-        api.getMostPopularWordsOnDay(req.params.day, function(result){
+        api.getMostPopularWordsOnDay(req.params.day, 15, function(result){ //Todo: 15 is hardcoded minAmount
             return rest.ok(result.slice(0, maxReturnElements));
         });
     });
@@ -102,7 +102,7 @@ module.exports.createWebApi = function(exp, rest, api, maxReturnElements, source
     //#######################################################  Popular words today  #############
 
     rest.get('/api/popularwords/', function(req, rest) {
-        api.getMostPopularWordsOnDay(theBase.getToday(), function(result){
+        api.getMostPopularWordsOnDay(theBase.getToday(), 15, function(result){ //Todo: 15 is hardcoded minAmount
             return rest.ok(result.slice(0, maxReturnElements));
         });
     });
