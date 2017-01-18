@@ -94,6 +94,34 @@ module.exports = class DataManager{
         });
     }
 
+    getArticleToProcess(callback)
+    {
+        var theBase = this;
+        theBase.client.get('lastProcessedLinkId', function(err, reply) {
+            if(typeof reply == 'undefined' || reply == null){
+                theBase.client.set('lastProcessedLinkId', '0');
+                console.log("lastProcessedLinkId init to: 0");
+                theBase.lastProcessedLinkId = 0;
+            }
+            else
+            {
+                theBase.lastProcessedLinkId = parseInt(reply);
+            }
+
+            var nextId = theBase.lastProcessedLinkId + 1;
+            theBase.client.hgetall("link:" + nextId, function(err, reply) {
+                if(reply != null){
+                    callback(new Link(reply.title, reply.date, reply.url, reply.sourceId), reply.id);
+                    theBase.client.incr('lastProcessedLinkId');
+                }
+                else
+                {
+                    //No more links
+                }
+            });
+        });
+    }
+
     /*getLinks(linkArrived)
     {
         for(var i = 0; i < this.lastLinkId; i++)
@@ -104,34 +132,6 @@ module.exports = class DataManager{
             });
         }        
     }*/
-
-    getUnprocessedLinks(linkArrived)
-    {
-        var theBase = this;
-        
-        theBase.client.get('lastProcessedLinkId', function(err, reply) {
-            if(typeof reply == 'undefined' || reply == null){
-                theBase.client.set('lastProcessedLinkId', '0');
-                console.log("lastProcessedLinkId init to: 0");
-                theBase.lastProcessedLinkId = 0;
-            }
-            else
-            {
-                console.log("lastProcessedLinkId id: " + reply);
-                theBase.lastProcessedLinkId = parseInt(reply);
-            }
-
-            for(var i = theBase.lastProcessedLinkId; i < theBase.lastLinkId; i++)
-            {
-                theBase.client.hgetall("link:"+i, function(err, reply) {
-                    if(reply != null){
-                        linkArrived(new Link(reply.title, reply.date, reply.url, reply.sourceId), reply.id);
-                        theBase.client.incr('lastProcessedLinkId');        
-                    }
-                });
-            }
-        });
-    }
 
     /*resetProcessedDataCounter()
     {
@@ -146,6 +146,22 @@ module.exports = class DataManager{
                 theBase.client.del(keys[i], function(err, reply){
                     console.log("Deleted: " + keys[i] + " | " + reply + " | " + err);
                 });
+            }
+        });
+    }
+
+    deleteRedundancies()
+    {
+        var theBase = this;
+        this.client.keys('*', function (err, keys) {
+            for(var i = 0, len = keys.length; i < len; i++) {
+                if(keys[i] != "lastLinkId" && keys[i].startsWith("blacklist:") == false && keys[i].startsWith("oldBlacklist:") == false && keys[i].startsWith("link:") == false)
+                {
+                    //console.log("To delete: " + keys[i]);
+                    theBase.client.del(keys[i], function(err, reply){
+                        console.log("Deleted: " + keys[i] + " | " + reply + " | " + err);
+                    });
+                }
             }
         });
     }

@@ -41,9 +41,10 @@ var dm = new DataManager(function()
     };
 
     var processLinks = function(){
-        dm.getUnprocessedLinks(function(link, linkId){
-            console.log("Processing link: " + linkId);
-            ProcessLink.processLink(link, linkId, dm);        
+        dm.getArticleToProcess(function(link, id){
+            console.log("Process: " + id);
+            ProcessLink.processLink(link, id, dm);
+            processLinks();      
         });
     };
 
@@ -73,8 +74,8 @@ var dm = new DataManager(function()
         }    
     });
 
-    //downloadLinks();
-    //setTimeout(processLinks, 1000 * 60);
+    downloadLinks();
+    setTimeout(processLinks, 1000 * 60);
 
     //dm.disconnect();
 });

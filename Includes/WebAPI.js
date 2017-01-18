@@ -41,6 +41,30 @@ module.exports.createWebApi = function(exp, rest, api, maxReturnElements, source
         });
     });
 
+    //#######################################################  Right Neighbour On Day  #############
+
+    rest.get('/api/rightneighbour/:word/:day', function(req, rest) {
+        api.getRightNeighbourForWordOnDay(req.params.word.toLowerCase(), req.params.day, function(result){
+            return rest.ok(result.slice(0, maxReturnElements));
+        });
+    });
+
+    //#######################################################  Left Neighbour  #############
+
+    rest.get('/api/leftneighbour/:word', function(req, rest) {
+        api.getLeftNeighbourForWord(req.params.word.toLowerCase(), function(result){
+            return rest.ok(result.slice(0, maxReturnElements));
+        });
+    });
+
+    //#######################################################  Left Neighbour On Day  #############
+
+    rest.get('/api/leftneighbour/:word/:day', function(req, rest) {
+        api.getLeftNeighbourForWordOnDay(req.params.word.toLowerCase(), req.params.day, function(result){
+            return rest.ok(result.slice(0, maxReturnElements));
+        });
+    });
+
     //#######################################################  Same headline  #############
 
     rest.get('/api/sameheadline/:query', function(req, rest) {

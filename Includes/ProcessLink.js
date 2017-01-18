@@ -5,6 +5,7 @@ var DataManager = require('./DataManager.js');
 
 module.exports.processLink = function (link, linkId, dm)
 {
+    //Debug purposes
     function checkValue(value, msg, extra)
     {
         if(value == null || value == '' || value == " " || typeof value === 'undefined' || value == false)
@@ -33,14 +34,26 @@ module.exports.processLink = function (link, linkId, dm)
         //The count history over time for a given word 
         dm.client.zincrby("wordOnDate:" + word, 1, day); 
 
-        //The words that occure right of a given word
+        //The word that occures right of a given word
+        var rightWord = "#end#";
+
         if(i+1 < words.length)
-        {
-            var rightWord = words[i + 1];
-            checkValue(rightWord, "rightWord " + (i + 1), words);
-            
-            dm.client.zincrby("rnWords:" + word, 1, rightWord);
-        }
+            rightWord = words[i + 1];
+
+        checkValue(rightWord, "rightWord " + (i + 1), words);
+        
+        dm.client.zincrby("rnWords:" + word, 1, rightWord);
+        dm.client.zincrby("rnWordsOnDay:" + word + ":" + day, 1, rightWord);            
+        
+        //The word that occures left of the given word
+         var leftWord = "#beginning#";
+        if(i-1 >= 0)
+            leftWord = words[i - 1];
+
+        checkValue(leftWord, "leftWord " + (i - 1), words);
+        
+        dm.client.zincrby("lnWords:" + word, 1, leftWord);
+        dm.client.zincrby("lnWordsOnDay:" + word + ":" + day, 1, leftWord);            
 
         //Inverted index to find newest articles to word
         dm.client.zadd("invIndex:"+word, day, linkId);

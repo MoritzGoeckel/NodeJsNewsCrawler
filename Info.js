@@ -13,7 +13,8 @@ var DataManager = require('./Includes/DataManager.js');
 var dm = new DataManager(function(){
     
     //dm.deleteBlacklist("test");
-    dm.client.info("memory", function(err, reply){
+    dm.client.info(function(err, reply){
+        console.log(reply);
         var matches_array = reply.match(/used_memory_human:([0-9.MBK]*)/);
         console.log("Used memory: " + matches_array[1]);
         dm.disconnect();

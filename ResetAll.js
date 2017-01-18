@@ -13,7 +13,9 @@ var DataManager = require('./Includes/DataManager.js');
 var dm = new DataManager(function(){
     
     //dm.deleteBlacklist("test");
-    dm.cleanSlate()
+    //dm.cleanSlate()
+
+    dm.deleteRedundancies();
 
     //dm.disconnect();
 });

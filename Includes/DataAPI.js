@@ -29,13 +29,33 @@ module.exports = class DataAPI{
 
     getRightNeighbourForWord(word, callback)
     {
+        getNeighbourInternal("rnWords:" + word.toLowerCase(), callback);
+    }
+
+    getRightNeighbourForWordOnDay(word, day, callback)
+    {
+        getNeighbourInternal("rnWordsOnDay:" + word.toLowerCase() + ":" + day, callback);
+    }
+
+    getLeftNeighbourForWord(word, callback)
+    {
+        getNeighbourInternal("lnWords:" + word.toLowerCase(), callback);
+    }
+
+    getLeftNeighbourForWordOnDay(word, day, callback)
+    {
+        getNeighbourInternal("lnWordsOnDay:" + word.toLowerCase() + ":" + day, callback);
+    }
+
+    getNeighbourInternal(query, callback)
+    {
         var theBase = this;
-        this.client.zrevrangebyscore("rnWords:" + word.toLowerCase(), "+inf", 0, 'withscores', function(err, reply){
+        this.client.zrevrangebyscore(query, "+inf", 0, 'withscores', function(err, reply){
             var words = [];
-            theBase.buildWightedWords(reply, words, 0, theBase, function(result){
+            theBase.buildWightedWords(reply, words, 0, theBase, function(result){ //Todo: really wighted?
                 callback(result);
             });
-        });    
+        });   
     }
 
     getSameHeadlineForWord(words, callback)
