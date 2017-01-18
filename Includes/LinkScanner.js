@@ -47,7 +47,7 @@ module.exports = class LinkScanner{
     processTitle(title)
     {
         var p = "";
-        var prohibitedChars = ["\n", "\r\n", "\r", "\t"];
+        var prohibitedChars = ["\n", "\r\n", "\r", "\t", "‘", "’"];
         
         var lastChar = " ";
         for(var i = 0; i < title.length; i++)
