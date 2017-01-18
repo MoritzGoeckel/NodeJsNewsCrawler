@@ -13,7 +13,17 @@ $(document).ready(function(){
 
     $.getJSON( "/api/sources/", function( data ) {
         sources = data;        
-    });    
+    }); 
+
+    $.getJSON( "/api/popularwords/", function( data ) {
+        var output = "";
+         $.each(data, function( index ) {
+            //console.log(index);
+            if(index < 60)
+                output += '<a class="wordlink" onclick="doSearch(\''+data[index].word+'\'); $(\'#search_input\').val(\''+data[index].word+'\');" href="#">' + capitalizeFirstLetter(data[index].word) + '</a> ';
+        });
+        $("#popular_words").html(output);       
+    }); 
 });
 
 function doSearch(query){
@@ -24,7 +34,7 @@ function doSearch(query){
         data = data.splice(0, 35);
 
         $.each(data, function( key, val ) {
-            output += '<a onclick="doSearch(\''+val.word+'\'); $(\'#search_input\').val(\''+val.word+'\');" href="#">' + capitalizeFirstLetter(val.word) + '</a> ';
+            output += '<a class="wordlink" onclick="doSearch(\''+val.word+'\'); $(\'#search_input\').val(\''+val.word+'\');" href="#">' + capitalizeFirstLetter(val.word) + '</a> ';
         });
         
         if(output != "")
@@ -35,6 +45,26 @@ function doSearch(query){
         else
         {
             $("#relatedwords_wrapper_2").hide();            
+        }
+    });
+
+    $.getJSON("/api/sameheadline/" + query + "/" + getDateToday(), function( data ) {
+        var output = "";
+
+        data = data.splice(0, 35);
+
+        $.each(data, function( key, val ) {
+            output += '<a class="wordlink" onclick="doSearch(\''+val.word+'\'); $(\'#search_input\').val(\''+val.word+'\');" href="#">' + capitalizeFirstLetter(val.word) + '</a> ';
+        });
+        
+        if(output != "")
+        {
+            $("#relatedwords_today_wraper").html(output);
+            $("#relatedwords_today_wrapper_2").show();            
+        }
+        else
+        {
+            $("#relatedwords_today_wrapper_2").hide();            
         }
     });
 
@@ -53,8 +83,9 @@ function doSearch(query){
     $.getJSON("/api/popularwordhistory/" + query, function( data ) {   
         if(data.length != 0)
         {
+            data = data.sort(function(a, b){return a.date - b.date});            
             data = data.splice(0, 30);
-            var labels = []; //Todo: Add real labels        
+            var labels = [];      
             var yData = [];
 
             console.log(data);
@@ -131,4 +162,8 @@ function secondsToDate(sec){
     var min = a.getMinutes();
     //var sec = a.getSeconds();
     return date + ' ' + month + ' ' + year + ' ' + hour + ':' + min;
+}
+
+function getDateToday(){
+    return Math.floor(Date.now() / 1000 / 60 / 60 / 24)
 }

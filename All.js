@@ -1,3 +1,5 @@
+process.env.UV_THREADPOOL_SIZE = 10;
+
 var Sources = require("./data/sources.json");
 //var Articles = require("./data/articles.json");
 
@@ -71,7 +73,8 @@ var dm = new DataManager(function()
         }    
     });
 
-    downloadLinks();
+    //downloadLinks();
+    //setTimeout(processLinks, 1000 * 60);
 
     //dm.disconnect();
 });

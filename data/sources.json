@@ -11,5 +11,12 @@
 {"url": "http://www.shanghaidaily.com/", "name": "ShanghaiDaily", "id": "sd"},
 {"url": "http://en.people.cn/", "name": "PeoplesDaily", "id": "pd"},
 {"url": "http://timesofindia.indiatimes.com/", "name": "IndianTimes", "id": "it"},
-{"url": "http://www.jpost.com/", "name": "JerusalemPost", "id": "jp"}
+{"url": "http://www.jpost.com/", "name": "JerusalemPost", "id": "jp"},
+{"url": "http://edition.cnn.com/", "name": "CNN", "id": "cnn"},
+{"url": "http://www.foxnews.com/", "name": "FoxNews", "id": "fn"},
+{"url": "http://www.nbcnews.com/", "name": "NBC", "id": "nbc"},
+{"url": "http://abcnews.go.com/", "name": "ABC", "id": "abc"},
+{"url": "http://www.bbc.com/news", "name": "BBC", "id": "bbc"},
+{"url": "http://www.usatoday.com/", "name": "USAToday", "id": "usat"},
+{"url": "http://www.latimes.com/", "name": "LATimes", "id": "lat"}
 ]

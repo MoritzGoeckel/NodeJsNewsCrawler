@@ -20,3 +20,6 @@ function getScoreFromString(str)
                 orderedFirstWord = secondWord; //This is somehow dangerous in js
                 orderedSecondWord = firstWord;
             }
+
+
+            Delete: //{"url": "http://www.huffingtonpost.de/", "name": "HuffingtonPost", "id": "hfp"},

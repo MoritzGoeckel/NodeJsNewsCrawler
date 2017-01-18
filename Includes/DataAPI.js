@@ -14,7 +14,9 @@ module.exports = class DataAPI{
             var word = inputArray[i];
             var count = inputArray[i + 1];
             theBase.getTotalCountForWord(word, function(totalCount){
-                outputArray.push({word: word, count: parseFloat(count), totalCount: totalCount, score: Math.pow(parseFloat(count), 2) / totalCount}); //Todo: better formula?
+                var score = parseFloat(count) / totalCount; //Todo: better formula?
+
+                outputArray.push({word: word, count: parseFloat(count), totalCount: totalCount, score: score}); 
                 theBase.buildWightedWords(inputArray, outputArray, i + 2, theBase, callback);
             });
         }
@@ -38,8 +40,11 @@ module.exports = class DataAPI{
 
     getSameHeadlineForWord(words, callback)
     {
+        var tableName = Math.random() * 100000;
+        tableName = "tmp_" + tableName + "_SameHeadline_" + words.join("-");
+
         var theBase = this;
-        var args = ["tmp-w", words.length];
+        var args = [tableName, words.length];
         var wights = [];
 
         for(var i = 0; i < words.length; i++)
@@ -66,8 +71,8 @@ module.exports = class DataAPI{
                 args.push(wights[i]);
 
             theBase.client.zunionstore(args, function(err, reply){
-                theBase.client.zrevrangebyscore("tmp-w", "+inf", 0, 'withscores', function(err, reply){ //'withscores'
-                    theBase.client.del("tmp-w"); //Todo: Cacheing maybe? Different name
+                theBase.client.zrevrangebyscore(tableName, "+inf", 0, 'withscores', function(err, reply){ //'withscores'
+                    theBase.client.del(tableName); //Todo: Cacheing maybe? Different name
                     
                     var output = [];
                     for(var i = 0; i < reply.length; i +=2)
@@ -95,16 +100,76 @@ module.exports = class DataAPI{
         });
     }
 
-    //Todo: Multiple / Query
-    getSameHeadlineCountForDayAndWord(day, word, callback)
+    //Todo: Refactore duplicated code
+    getSameHeadlineCountForDayAndWord(day, words, callback)
     {
+        var tableName = Math.random() * 100000;
+        tableName = "tmp_" + tableName + "_SameHeadlineDayWord_" + day + "_" + words.join("-");
+
         var theBase = this;
+        var args = [tableName, words.length];
+        var wights = [];
+
+        for(var i = 0; i < words.length; i++)
+        {
+            args.push("daySameHeadlineCount:" + day + ":" + words[i].toLowerCase());
+        }
+
+        function buildWightsArray(i, theBase, callback){
+            if(i < words.length)
+            {
+                theBase.getTotalCountForWord(words[i], function(reply){
+                    wights.push(1 / reply);       
+                    buildWightsArray(i + 1, theBase, callback);     
+                });
+            }
+            else
+                callback(theBase);
+        }
+
+        buildWightsArray(0, this, function(theBase){
+            args.push('WEIGHTS');
+            
+            for(var i = 0; i < wights.length; i++)
+                args.push(wights[i]);
+
+            theBase.client.zunionstore(args, function(err, reply){
+                theBase.client.zrevrangebyscore(tableName, "+inf", 0, 'withscores', function(err, reply){ //'withscores'
+                    theBase.client.del(tableName); //Todo: Cacheing maybe? Different name
+                    
+                    var output = [];
+                    for(var i = 0; i < reply.length; i +=2)
+                        output.push({word: reply[i], score:reply[i + 1]});
+                    
+                    //Wight by word
+                    function WightByWordCount(theBase, array, i, callback)
+                    {
+                        if(i < array.length)
+                            theBase.client.zscore("generalWordCount", array[i].word, function(err, wordCount){
+                                array[i].wightedScore = Math.pow(array[i].score, 2) / wordCount;
+                                WightByWordCount(theBase, array, i + 1, callback);
+                            });
+                        else
+                            callback(array);
+                    }
+
+                    WightByWordCount(theBase, output, 0, function(output){               
+                        //output.sort(function (a, b) {return b.score - a.score}); 
+                        output.sort(function (a, b) {return b.wightedScore - a.wightedScore}); //Todo: use that!
+                        callback(output);                    
+                    });
+                });
+            });
+        });
+
+        //###################################################################
+        /*var theBase = this;
         this.client.zrevrangebyscore("daySameHeadlineCount:" + day + ":" + word.toLowerCase(), "+inf", 0, 'withscores', function(err, reply){
             var words = [];
             theBase.buildWightedWords(reply, words, 0, theBase, function(result){
                 callback(result);
             });
-        });
+        });*/
     }
 
     getTotalCountAllWords(callback)
@@ -124,7 +189,7 @@ module.exports = class DataAPI{
     getMostPopularWordsOnDay(day, callback)
     {
         var theBase = this;
-        this.client.zrevrangebyscore("dayWordCount:" + day, "+inf", 1, 'withscores', function(err, reply){
+        this.client.zrevrangebyscore("dayWordCount:" + day, "+inf", 10, 'withscores', function(err, reply){ //todo: 10 is hardcoded
             var words = [];
             theBase.buildWightedWords(reply, words, 0, theBase, function(result){
                 callback(result);

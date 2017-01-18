@@ -1,0 +1,60 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 14px;
+    color: #000;
+    background-color: rgb(130, 130, 130);
+}
+
+.form-control{
+    color: #000;
+}
+
+.panel{
+    margin-bottom: 4px;
+}
+
+a.wordlink{
+    background: linear-gradient(to left, white 50%, rgb(243, 0, 5) 50%);
+    background-size: 200% 100%;
+    background-position:right bottom;
+
+    padding-left: 2px;
+    padding-right: 2px;
+
+    display: inline-table;
+
+    transition:all 0.2s cubic-bezier(0.55, 0.06, 0.68, 0.19);
+}
+
+a.wordlink:hover, a.wordlink:active, a.wordlink:focus {
+    background-position:left bottom;
+    text-decoration: none;
+    color: white;
+}
+
+a.list-group-item{
+    background-color: white;
+    /*transition:all 0.3s ease;*/
+}
+
+a.list-group-item:hover{
+    background-color: rgb(243, 0, 5);
+    color: #c5c5c5;
+    text-decoration: none;
+}
+
+a.list-group-item:hover .list-group-item-heading{
+    color: #ffffff;
+}
+
+a, a:visited, a.list-group-item .list-group-item-heading, a.wordlink{
+    color: black;
+    text-decoration: none;
+}
+
+h3{
+    border-bottom: solid rgb(243, 0, 5) 2px;
+    display: inline-block;
+    padding: 0px 15px 0px 0px;
+}

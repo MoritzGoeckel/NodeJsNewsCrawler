@@ -52,8 +52,9 @@ module.exports.createWebApi = function(exp, rest, api, maxReturnElements, source
 
     //#######################################################  Same headline on day  #############
 
-    rest.get('/api/sameheadline/:word/:day', function(req, rest) {
-        api.getSameHeadlineCountForDayAndWord(req.params.day, req.params.word.toLowerCase(), function(result){
+    rest.get('/api/sameheadline/:query/:day', function(req, rest) {
+        var words = theBase.getWordsArray(req.params.query);
+        api.getSameHeadlineCountForDayAndWord(req.params.day, words, function(result){
             return rest.ok(result.slice(0, maxReturnElements));
         });
     });
