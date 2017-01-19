@@ -1,9 +1,6 @@
 #NewsCrawler
 This is a software which scans a given set of news sources and extracts its headlines. The headlines are processed and saved for later analysis. The data can be accessed from a web frontend or a rest API. Its all about the analysis of news trends.
 
-##Frontend
-![alt tag](https://raw.githubusercontent.com/MoritzGoeckel/NodeJSNewsCrawler/master/docs/newsscreen.PNG)
-
 ##Features
 * Downloads article titles from the news data/sources.json
 * Saves them in a Redis database
@@ -35,7 +32,7 @@ These are the API endpoints
 /api/sources/
 ```
 
-To get the day today you can use the following functionalities
+To get the day today to give to the api you can use the following function
 ``` javascript
 getToday = function(){
     return Math.floor(Date.now() / 1000 / 60 / 60 / 24);
@@ -94,3 +91,6 @@ Try generating the most important headlines of the day by executing 'CreateHeadl
   [ 'donald', 'trumps', 'inauguration', 'day' ],
   ...
 ```
+
+##Frontend
+![alt tag](https://raw.githubusercontent.com/MoritzGoeckel/NodeJSNewsCrawler/master/docs/newsscreen.PNG)
