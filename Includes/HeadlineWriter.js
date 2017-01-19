@@ -6,7 +6,7 @@ module.exports = class HeadlineWriter{
 
     getHeadlineForWord(word, thresholdCount, thresholdChance, callback)
     {
-        let headline = [word];
+        let headline = [{"word":word, "method":"initial"}];
         let theBase = this;
 
         theBase.addManyLeft(headline, theBase.api, thresholdCount, thresholdChance, function(leftCompleteHeadline){
@@ -23,7 +23,7 @@ module.exports = class HeadlineWriter{
             callbackFailed(array);
         else
         {
-            api.getRightNeighbourForWordOnDay(array[array.length - 1], theBase.getToday(), function(rn){                
+            api.getRightNeighbourForWordOnDay(array[array.length - 1].word, theBase.getToday(), function(rn){                
                 let choosenRight;
 
                 rn = rn.sort(function(a, b){return b.count - a.count;});
@@ -31,7 +31,7 @@ module.exports = class HeadlineWriter{
                 for(let i in rn)
                 {
                     if(rn[i].count >= thresholdCount && rn[i].score >= thresholdChance && candidates.indexOf(rn[i].word) > -1){
-                        choosenRight = rn[i].word;
+                        choosenRight = {word:rn[i].word, "method":"r", "score":rn[i].score, "count":rn[i].count};
                         break;
                     }
 
@@ -56,7 +56,7 @@ module.exports = class HeadlineWriter{
             callbackFailed(array);
         else
         {
-            api.getLeftNeighbourForWordOnDay(array[0], theBase.getToday(), function(ln){                
+            api.getLeftNeighbourForWordOnDay(array[0].word, theBase.getToday(), function(ln){                
                 let choosenLeft;
 
                 ln = ln.sort(function(a, b){return b.count - a.count;}); //Sort to count not score
@@ -64,7 +64,7 @@ module.exports = class HeadlineWriter{
                 for(let i in ln)
                 {
                     if(ln[i].count >= thresholdCount && ln[i].score >= thresholdChance && candidates.indexOf(ln[i].word) > -1){                                
-                        choosenLeft = ln[i].word;
+                        choosenLeft = {word:ln[i].word, "method":"l", "score":ln[i].score, "count":ln[i].count};
                         break;
                     }
 
@@ -90,7 +90,11 @@ module.exports = class HeadlineWriter{
     {
         let theBase = this;
 
-        this.api.getSameHeadlineCountForDayAndWord(theBase.getToday(), headline, function(candidatesResult){
+        let strHeadline = [];
+        for(let k in headline)
+            strHeadline.push(headline[k].word);
+
+        this.api.getSameHeadlineCountForDayAndWord(theBase.getToday(), strHeadline, function(candidatesResult){
             let candidates = [];
             for(let a in candidatesResult)
                 candidates.push(candidatesResult[a].word);
