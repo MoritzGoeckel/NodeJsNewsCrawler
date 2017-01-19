@@ -2,7 +2,7 @@
 This is a software which scans a given set of news sources and extracts its headlines. The headlines are processed and saved for later analysis. The data can be accessed from a web frontend or a rest API. Its all about the analysis of news trends.
 
 ##Frontend
-
+![alt tag](https://raw.githubusercontent.com/MoritzGoeckel/NodeJSNewsCrawler/master/docs/newsscreen.PNG)
 
 ##Features
 * Downloads article titles from the news data/sources.json
@@ -19,7 +19,7 @@ This is a software which scans a given set of news sources and extracts its head
 ##Rest API
 These are the API endpoints
 
-´´´
+```
 /api/search/:query
 /api/rightneighbour/:word
 /api/rightneighbour/:word/:day
@@ -33,14 +33,14 @@ These are the API endpoints
 /api/popularwordhistory/:word
 /api/link/:id
 /api/sources/
-´´´
+```
 
 To get the day today you can use the following functionalities
-´´´ javascript
+``` javascript
 getToday = function(){
     return Math.floor(Date.now() / 1000 / 60 / 60 / 24);
 }
-´´´
+```
 
 ##Dependencies
 * express
@@ -58,15 +58,15 @@ Download the files, install Redis, install the npm dpendencies and run the 'Star
 
 ##Usage
 To run the webserver and the downloader / processor just execute the 'Start.js' file
-´´´
-> node Start.js
-´´´
+
+´´´ > node Start.js
 
 ##Generating the most recent headlines
 Try generating the most important headlines of the day by executing 'CreateHeadlines.js'. This is heighly experimental 
-´´´
-> node CreateHeadlines.js
 
+´´´ > node CreateHeadlines.js
+
+```
 [ [ 'steven', 'mnuchin' ],
   [ 'womens', 'march' ],
   [ 'novak', 'djokovic', 'upset' ],
@@ -89,4 +89,4 @@ Try generating the most important headlines of the day by executing 'CreateHeadl
   [ 'more', 'than', '100', 'lapd' ],
   [ 'donald', 'trumps', 'inauguration', 'day' ],
   ...
-  ´´´
+```
