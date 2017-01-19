@@ -21,7 +21,7 @@ let dm = new DataManager(function()
 
     let allHeadlines = [];
 
-    let amount = 50;
+    let amount = 20;
 
     api.getMostPopularWordsOnDay(getToday(), 15, function(popular){
         for(let i = 0; i < popular.length && i < amount; i++)
