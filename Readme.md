@@ -51,7 +51,7 @@ getToday = function(){
 
 
 ##Setup
-Download the files, install Redis, install the npm dpendencies and run the 'Start.js'. You can also specify the news sources in the data/sources.json.
+Download the files, install Redis, install the npm dpendencies and run the 'Start.js'. You can also specify the news sources in the data/sources.json. After start navigate with your favorite browser to http://localhost:3000 to see the frontend
 
 ##Usage
 To run the webserver and the downloader / processor just execute the 'Start.js' file
