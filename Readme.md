@@ -59,12 +59,16 @@ Download the files, install Redis, install the npm dpendencies and run the 'Star
 ##Usage
 To run the webserver and the downloader / processor just execute the 'Start.js' file
 
-´´´ > node Start.js
+```
+> node Start.js
+```
 
 ##Generating the most recent headlines
 Try generating the most important headlines of the day by executing 'CreateHeadlines.js'. This is heighly experimental 
 
-´´´ > node CreateHeadlines.js
+```
+> node CreateHeadlines.js
+```
 
 ```
 [ [ 'steven', 'mnuchin' ],
