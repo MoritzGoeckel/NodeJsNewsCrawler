@@ -22,7 +22,7 @@ let dm = new DataManager(function()
     let allHeadlines = [];
 
     api.getMostPopularWordsOnDay(getToday(), 15, function(popular){
-        for(let i = 0; i < popular.length && i < 20; i++)
+        for(let i = 0; i < popular.length && i < 50; i++)
         {
             hw.getHeadlineForWord(popular[i].word, 5, 0.01, function(headline){
                 
@@ -79,7 +79,7 @@ let dm = new DataManager(function()
         }
 
         console.log(sortedHeadlines); 
-    }, 1000);
+    }, 3000);
 
     function getToday(){
         return Math.floor(Date.now() / 1000 / 60 / 60 / 24);
