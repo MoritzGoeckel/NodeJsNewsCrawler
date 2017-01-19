@@ -4,6 +4,43 @@ module.exports = class HeadlineWriter{
         this.api = api;
     }
 
+    getProccessedHeadlineForWord(word, countThreshold, chanceThreshold, callback)
+    {
+        let theBase = this;
+        this.getHeadlineForWord(word, countThreshold, chanceThreshold, function(headline)
+        {
+            let strHeadline = [];
+            for(let k in headline)
+                strHeadline.push(headline[k].word);
+
+            theBase.api.getSameHeadlineCountForDayAndWord(theBase.getToday(), strHeadline, function(related){
+                    
+                let b = 0;
+                while(related.length > b && related[b].wightedScore >= chanceThreshold / 10 && headline.length <= 2){
+                    if(strHeadline.indexOf(related[b].word) == -1)
+                        headline.push({"word":related[b].word, "method":"rel", "score":related[b].score, "count":related[b].count});
+                    b++;
+                }
+
+                let filtered = [];
+                for(let c in headline)
+                    if(headline[c].word.length >= 2)
+                        filtered.push(headline[c]);
+
+                let stringArray = [];
+                for(let c in filtered)
+                    if(filtered.length >= 2)
+                        stringArray.push(filtered[c].word);
+                
+                //Problem with sync
+                if(stringArray.length >= 2)
+                    callback(stringArray);
+                else
+                    callback();
+            });
+        });
+    }
+
     getHeadlineForWord(word, thresholdCount, thresholdChance, callback)
     {
         let headline = [{"word":word, "method":"initial"}];
