@@ -19,7 +19,7 @@ let dm = new DataManager(function()
     let api = new DataAPI(dm.client);
     let hw = new HeadlineWriter(api);
 
-    hw.getHeadlinesToday(20, 15, 3, 0.01, function(result)
+    hw.getHeadlinesToday(40, 15, 3, 0.01, function(result)
     {
         console.log(result);
     });
