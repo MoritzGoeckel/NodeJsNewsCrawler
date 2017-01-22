@@ -15,7 +15,7 @@ module.exports = class HeadlineWriter{
             {
                 theBase.getProccessedHeadlineForWord(popular[i].word, countThreshold, chanceThreshold, function(stringArray){
                     if(stringArray != undefined)
-                        allHeadlines.push(stringArray);
+                        allHeadlines.push(stringArray); //Todo: The sort algo seems broken (change amount and it gets less?)
 
                     if(i == amount - 1){
                         let sortedHeadlines = [];

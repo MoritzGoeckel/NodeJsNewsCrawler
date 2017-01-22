@@ -28,7 +28,8 @@ $(document).ready(function(){
 
 function doSearch(query){
 
-    $.getJSON("/api/sameheadline/" + query, function( data ) {
+    $("#relatedwords_wrapper_2").hide();  // to remove
+    /*$.getJSON("/api/sameheadline/" + query, function( data ) {
         let output = "";
 
         data = data.splice(0, 35);
@@ -46,7 +47,7 @@ function doSearch(query){
         {
             $("#relatedwords_wrapper_2").hide();            
         }
-    });
+    });*/
 
     $.getJSON("/api/sameheadline/" + query + "/" + getDateToday(), function( data ) {
         let output = "";
@@ -123,6 +124,10 @@ function onclicksearch(what){
 
 function processUrl(url){
     //console.log(url);
+
+    if(url.startsWith("http://www.dailymail.co.uk"))
+        url = url.replace("/home/index.html", "");
+
     return url;
 
     //dail mail /home/index.html
