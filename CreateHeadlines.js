@@ -19,45 +19,9 @@ let dm = new DataManager(function()
     let api = new DataAPI(dm.client);
     let hw = new HeadlineWriter(api);
 
-    let allHeadlines = [];
-
-    let amount = 20;
-
-    api.getMostPopularWordsOnDay(getToday(), 15, function(popular){
-        for(let i = 0; i < popular.length && i < amount; i++)
-        {
-            hw.getProccessedHeadlineForWord(popular[i].word, 2, 0.01, function(stringArray){ //Maybe 5
-                if(stringArray != undefined)
-                    allHeadlines.push(stringArray);
-
-                if(i == amount - 1){
-                    let sortedHeadlines = [];
-
-                    for(let a = 0; a < allHeadlines.length; a++)
-                    {
-                        let foundone = false;
-                        for(let b = 0; b < allHeadlines.length; b++)
-                        {
-                            for(let c in allHeadlines[b])
-                                if(allHeadlines[a].indexOf(allHeadlines[b][c]) != -1 && ((allHeadlines[b].length > allHeadlines[a].length) || (allHeadlines[b].length == allHeadlines[a].length && b > a)))
-                                {
-                                    foundone = true;
-                                    break;
-                                }
-                        }
-
-                        if(foundone == false)
-                            sortedHeadlines.push(allHeadlines[a]);
-                    }
-
-                    console.log(sortedHeadlines);
-                }
-            });
-        }
+    hw.getHeadlinesToday(20, 15, 3, 0.01, function(result)
+    {
+        console.log(result);
     });
-
-    function getToday(){
-        return Math.floor(Date.now() / 1000 / 60 / 60 / 24);
-    }
 
 });

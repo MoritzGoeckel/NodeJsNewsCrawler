@@ -4,9 +4,44 @@ module.exports = class HeadlineWriter{
         this.api = api;
     }
 
-    getHeadlinesToday(countThreshold, chanceThreshold, callback)
+    getHeadlinesToday(amount, minAmount, countThreshold, chanceThreshold, callback)
     {
+        let theBase = this;
+        let allHeadlines = [];
 
+        theBase.api.getMostPopularWordsOnDay(theBase.getToday(), minAmount, function(popular){
+
+            for(let i = 0; i < popular.length && i < amount; i++)
+            {
+                theBase.getProccessedHeadlineForWord(popular[i].word, countThreshold, chanceThreshold, function(stringArray){
+                    if(stringArray != undefined)
+                        allHeadlines.push(stringArray);
+
+                    if(i == amount - 1){
+                        let sortedHeadlines = [];
+
+                        for(let a = 0; a < allHeadlines.length; a++)
+                        {
+                            let foundone = false;
+                            for(let b = 0; b < allHeadlines.length; b++)
+                            {
+                                for(let c in allHeadlines[b])
+                                    if(allHeadlines[a].indexOf(allHeadlines[b][c]) != -1 && ((allHeadlines[b].length > allHeadlines[a].length) || (allHeadlines[b].length == allHeadlines[a].length && b > a)))
+                                    {
+                                        foundone = true;
+                                        break;
+                                    }
+                            }
+
+                            if(foundone == false)
+                                sortedHeadlines.push(allHeadlines[a]);
+                        }
+
+                        callback(sortedHeadlines);
+                    }
+                });
+            }
+        });
     }
 
     getProccessedHeadlineForWord(word, countThreshold, chanceThreshold, callback)

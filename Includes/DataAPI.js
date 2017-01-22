@@ -52,6 +52,10 @@ module.exports = class DataAPI{
         let theBase = this;
         this.client.zrevrangebyscore(query, "+inf", 0, 'withscores', function(err, reply){
             let words = [];
+
+            if(err != null)
+                console.log(err);
+
             theBase.buildWightedWords(reply, words, 0, theBase, function(result){ //Todo: really wighted?
                 callback(result);
             });
@@ -211,6 +215,10 @@ module.exports = class DataAPI{
         let theBase = this;
         this.client.zrevrangebyscore("dayWordCount:" + day, "+inf", minAmount, 'withscores', function(err, reply){
             let words = [];
+
+            if(err != null)
+                console.log(err);
+        
             theBase.buildWightedWords(reply, words, 0, theBase, function(result){
                 callback(result);
             });
