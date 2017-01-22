@@ -26,7 +26,7 @@ let dm = new DataManager(function()
     api.getMostPopularWordsOnDay(getToday(), 15, function(popular){
         for(let i = 0; i < popular.length && i < amount; i++)
         {
-            hw.getProccessedHeadlineForWord(popular[i].word, 5, 0.01, function(stringArray){
+            hw.getProccessedHeadlineForWord(popular[i].word, 2, 0.01, function(stringArray){ //Maybe 5
                 if(stringArray != undefined)
                     allHeadlines.push(stringArray);
 

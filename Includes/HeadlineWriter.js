@@ -4,6 +4,11 @@ module.exports = class HeadlineWriter{
         this.api = api;
     }
 
+    getHeadlinesToday(countThreshold, chanceThreshold, callback)
+    {
+
+    }
+
     getProccessedHeadlineForWord(word, countThreshold, chanceThreshold, callback)
     {
         let theBase = this;
@@ -18,7 +23,7 @@ module.exports = class HeadlineWriter{
                 let b = 0;
                 while(related.length > b && related[b].wightedScore >= chanceThreshold / 10 && headline.length <= 2){
                     if(strHeadline.indexOf(related[b].word) == -1)
-                        headline.push({"word":related[b].word, "method":"rel", "score":related[b].score, "count":related[b].count});
+                        headline.push({"word":related[b].word, "method":"rel", "score":related[b].score, "count":related[b].count}); //Todo never happens
                     b++;
                 }
 
@@ -139,7 +144,7 @@ module.exports = class HeadlineWriter{
             addManyFunction(headline, api, thresholdCount, thresholdChance, candidates,
                 function(newHeadline){
                     //Success try again
-                    theBase.addManyLeft(newHeadline, api, thresholdCount, thresholdChance, callback);
+                    theBase.addManyInternal(newHeadline, api, thresholdCount, thresholdChance, addManyFunction, callback);
                 }, callback);
         });
     }
