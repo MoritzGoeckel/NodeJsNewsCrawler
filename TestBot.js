@@ -25,59 +25,58 @@ let dm = new DataManager(function()
 {
     let api = new DataAPI(dm.client);
     
-    fb.downloadPosts(whoGotKilledId, function(data, prev, next){
-        lastPosts = data;
-        updateBot();
-    });
-
     let updateBot = function(){
-        let postable = [];
-        let done = 0;
-        api.getLinksToWords(["killed"], function(res){
-            for(let r = 0; r < res.length && r < 20; r++)
-            {
-                api.getLink(res[r], function(link){
-                    if(link.sourceId != "dm")
-                    {
-                        link.postTitle = whoGotKilledFromTitle(link.title);
-                        let found = false;
-                        for(let l in lastPosts)
+        fb.downloadPosts(whoGotKilledId, function(data, prev, next){
+            lastPosts = data;
+
+            let postable = [];
+            let done = 0;
+            api.getLinksToWords(["killed"], function(res){
+                for(let r = 0; r < res.length && r < 20; r++)
+                {
+                    api.getLink(res[r], function(link){
+                        if(link.sourceId != "dm")
                         {
-                            if((lastPosts[l].link != undefined && lastPosts[l].link == link.url) || lastPosts[l].message == link.postTitle)
+                            link.postTitle = whoGotKilledFromTitle(link.title);
+                            let found = false;
+                            for(let l in lastPosts)
                             {
-                                found = true;
-                                break;
+                                if((lastPosts[l].link != undefined && lastPosts[l].link == link.url) || lastPosts[l].message == link.postTitle)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            if(found == false)
+                                postable.push(link); //Postable
+                        }
+
+                        done++;
+                        if(done == 20)
+                        {
+                            postable = postable.sort(function(a, b){return parseInt(b.date) - parseInt(a.date)});
+                        
+                            /*console.log("Postable: ");
+                            for(let p in postable){
+                                console.log(postable[p]); //All done
+                                console.log("");                            
+                            }*/
+
+                            if(postable.length >= 1)
+                            {
+                                console.log("Posting: ");
+                                console.log(postable[0]);
+                                fb.postTo(whoGotKilledId, postable[0].postTitle, postable[0].url, whoGotKilledToken);
+                            }
+                            else
+                            {
+                                console.log("Nothing to post anymore :(");
                             }
                         }
-
-                        if(found == false)
-                            postable.push(link); //Postable
-                    }
-
-                    done++;
-                    if(done == 20)
-                    {
-                        postable = postable.sort(function(a, b){return parseInt(b.date) - parseInt(a.date)});
-                    
-                        /*console.log("Postable: ");
-                        for(let p in postable){
-                            console.log(postable[p]); //All done
-                            console.log("");                            
-                        }*/
-
-                        if(postable.length >= 1)
-                        {
-                            console.log("Posting: ");
-                            console.log(postable[0]);
-                            fb.postTo(whoGotKilledId, postable[0].postTitle, postable[0].url, whoGotKilledToken);
-                        }
-                        else
-                        {
-                            console.log("Nothing to post anymore :(");
-                        }
-                    }
-                });
-            }
+                    });
+                }
+            });
         });
     }
 
