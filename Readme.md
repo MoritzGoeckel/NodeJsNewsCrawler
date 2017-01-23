@@ -67,9 +67,12 @@ To run the webserver and the downloader / processor just execute the 'Start.js' 
 ##Facebook bot
 It is possible to create news bots for facebook pages with this framework. I created an example bot. Create a /data/config.json file for your facebook page and run
 ```
-> node TestBot.js
+> node WhoGotKilledBot.js
 ```
 If you want to see a bot in action: https://www.facebook.com/pg/whogotkilled/
+
+The WhoGotKilledBot searches for news with the word "killed" and tires to extract the information who got killed in which place. It will post these articles every 10 minutes to the facebook page and avoids doublicated posts. There is also an TrumpNews bot.
+
 
 ##Generating the most recent headlines
 Try generating the most important headlines of the day by executing 'CreateHeadlines.js'. This is heighly experimental 

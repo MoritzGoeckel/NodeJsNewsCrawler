@@ -29,19 +29,21 @@ let dm = new DataManager(function()
         fb.downloadPosts(whoGotKilledId, function(data, prev, next){
             lastPosts = data;
 
+            console.log(data);
+
             let postable = [];
             let done = 0;
             api.getLinksToWords(["killed"], function(res){
-                for(let r = 0; r < res.length && r < 20; r++)
+                for(let r = 0; r < res.length && r < 50; r++)
                 {
                     api.getLink(res[r], function(link){
-                        if(link.sourceId != "dm")
+                        if(link.sourceId != "dm") //Links from that site are buggy
                         {
                             link.postTitle = whoGotKilledFromTitle(link.title);
                             let found = false;
                             for(let l in lastPosts)
                             {
-                                if((lastPosts[l].link != undefined && lastPosts[l].link == link.url) || lastPosts[l].message == link.postTitle)
+                                if(lastPosts[l].message == link.postTitle)
                                 {
                                     found = true;
                                     break;
@@ -80,7 +82,9 @@ let dm = new DataManager(function()
         });
     }
 
-    //Every hour
+    updateBot();
+
+    //Every 10 minutes
     Schedule.scheduleJob('10 * * * *', updateBot);
     Schedule.scheduleJob('20 * * * *', updateBot);
     Schedule.scheduleJob('30 * * * *', updateBot);
