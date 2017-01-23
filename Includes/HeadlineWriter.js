@@ -4,193 +4,140 @@ module.exports = class HeadlineWriter{
         this.api = api;
     }
 
-    getHeadlinesToday(amount, minAmount, countThreshold, chanceThreshold, callback)
+    getClusteredWords(amount, relationAverageMultiplicator, minAmount, callback)
     {
         let theBase = this;
-        let allHeadlines = [];
+        let headlines = {};
+
+        let scoreEntries = 0; //[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let scoreSum = 0; //[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
         theBase.api.getMostPopularWordsOnDay(theBase.getToday(), minAmount, function(popular){
 
-            for(let i = 0; i < popular.length && i < amount; i++)
+            for(let i = 0; i < popular.length && i < amount * 10; i++)
             {
-                theBase.getProccessedHeadlineForWord(popular[i].word, countThreshold, chanceThreshold, function(stringArray){
-                    if(stringArray != undefined)
-                        allHeadlines.push(stringArray); //Todo: The sort algo seems broken (change amount and it gets less?)
-
-                    if(i == amount - 1){
-                        let sortedHeadlines = [];
-
-                        for(let a = 0; a < allHeadlines.length; a++)
+                theBase.api.getSameHeadlineCountForDayAndWord(theBase.getToday(), [popular[i].word], function(related){
+                    headlines[popular[i].word] = [];                    
+                    
+                    setTimeout(function(){
+                        for(let f = 0; f < related.length && f < amount; f++)
                         {
-                            let foundone = false;
-                            for(let b = 0; b < allHeadlines.length; b++)
-                            {
-                                for(let c in allHeadlines[b])
-                                    if(allHeadlines[a].indexOf(allHeadlines[b][c]) != -1 && ((allHeadlines[b].length > allHeadlines[a].length) || (allHeadlines[b].length == allHeadlines[a].length && b > a)))
-                                    {
-                                        foundone = true;
-                                        break;
-                                    }
+                            if(headlines[related[f].word] != undefined){
+
+                                //let n = headlines[popular[i].word].length;
+                                scoreEntries += 1;
+                                scoreSum += related[f].wightedScore;
+
+                                headlines[popular[i].word].push({word:related[f].word, score:related[f].wightedScore});
                             }
-
-                            if(foundone == false)
-                                sortedHeadlines.push(allHeadlines[a]);
                         }
-
-                        callback(sortedHeadlines);
-                    }
+                    }, 4000);
                 });
             }
-        });
-    }
 
-    getProccessedHeadlineForWord(word, countThreshold, chanceThreshold, callback)
-    {
-        let theBase = this;
-        this.getHeadlineForWord(word, countThreshold, chanceThreshold, function(headline)
-        {
-            let strHeadline = [];
-            for(let k in headline)
-                strHeadline.push(headline[k].word);
+            setTimeout(function(){ //I hate this timeout workaround todo!
+                console.log(scoreSum);
+                console.log(scoreEntries);
 
-            theBase.api.getSameHeadlineCountForDayAndWord(theBase.getToday(), strHeadline, function(related){
-                    
-                let b = 0;
-                while(related.length > b && related[b].wightedScore >= chanceThreshold / 10 && headline.length <= 2){
-                    if(strHeadline.indexOf(related[b].word) == -1)
-                        headline.push({"word":related[b].word, "method":"rel", "score":related[b].score, "count":related[b].count}); //Todo never happens
-                    b++;
+                //Remove below average
+                for(let k in headlines)
+                {
+                    for(let r = 0; r < headlines[k].length; r++)
+                    {
+                        if(headlines[k][r].score * relationAverageMultiplicator < scoreSum / scoreEntries)
+                        {
+                            headlines[k].splice(r, 1);
+                            r--;
+                        }
+                    }
                 }
 
-                let filtered = [];
-                for(let c in headline)
-                    if(headline[c].word.length >= 2)
-                        filtered.push(headline[c]);
-
-                let stringArray = [];
-                for(let c in filtered)
-                    if(filtered.length >= 2)
-                        stringArray.push(filtered[c].word);
-                
-                //Problem with sync
-                if(stringArray.length >= 2)
-                    callback(stringArray);
-                else
-                    callback();
-            });
-        });
-    }
-
-    getHeadlineForWord(word, thresholdCount, thresholdChance, callback)
-    {
-        let headline = [{"word":word, "method":"initial"}];
-        let theBase = this;
-
-        theBase.addManyLeft(headline, theBase.api, thresholdCount, thresholdChance, function(leftCompleteHeadline){
-            theBase.addManyRight(leftCompleteHeadline, theBase.api, thresholdCount, thresholdChance, function(completeHeadline){
-                callback(completeHeadline);
-            });
-        });
-    }
-
-    addWordRight(array, api, thresholdCount, thresholdChance, candidates, callbackSuccess, callbackFailed)
-    {
-        let theBase = this;
-        if(array[array.length - 1] == "#end#")
-            callbackFailed(array);
-        else
-        {
-            api.getRightNeighbourForWordOnDay(array[array.length - 1].word, theBase.getToday(), function(rn){                
-                let choosenRight;
-
-                rn = rn.sort(function(a, b){return b.count - a.count;});
-
-                for(let i in rn)
+                //remove very similar
+                for(let k in headlines)
                 {
-                    if(rn[i].count >= thresholdCount && rn[i].score >= thresholdChance && candidates.indexOf(rn[i].word) > -1){
-                        choosenRight = {word:rn[i].word, "method":"r", "score":rn[i].score, "count":rn[i].count};
-                        break;
+                    for(let r = 0; r < headlines[k].length; r++)
+                    {
+                        for(let r2 = 0; r2 < headlines[k].length; r2++)
+                        {
+                            if(r != r2 && theBase.levenshteinDistance(headlines[k][r].word, headlines[k][r2].word) < 2)
+                            {
+                                headlines[k].splice(r, 1);
+                                r--;
+                            }
+                        }
+                    }
+                }
+
+                theBase.api.getMostPopularWordsOnDay(theBase.getToday(), minAmount, function(topPopular){
+                    let output = [];
+
+                    for(let i = 0; i < topPopular.length && i < amount; i++)
+                    {
+                        output.push({word:topPopular[i].word, relations:headlines[topPopular[i].word]});
                     }
 
-                    if(rn[i].count < thresholdCount)
-                        break;
-                }
+                    callback(output);                    
+                });
 
-                if(choosenRight != undefined){
-                    array.push(choosenRight);
-                    callbackSuccess(array);
-                }
-                else
-                    callbackFailed(array);
-            });
-        }
+            }, 10000);
+        });
     }
 
-    addWordLeft(array, api, thresholdCount, thresholdChance, candidates, callbackSuccess, callbackFailed)
+    getDistance(headlineOne, headlineTwo)
     {
-        let theBase = this;
-        if(array[0] == "#beginning#")
-            callbackFailed(array);
-        else
-        {
-            api.getLeftNeighbourForWordOnDay(array[0].word, theBase.getToday(), function(ln){                
-                let choosenLeft;
+        var h1 = headlineOne.slice();
+        var h2 = headlineTwo.slice();
 
-                ln = ln.sort(function(a, b){return b.count - a.count;}); //Sort to count not score
+        h1.sort();
+        h2.sort();
 
-                for(let i in ln)
-                {
-                    if(ln[i].count >= thresholdCount && ln[i].score >= thresholdChance && candidates.indexOf(ln[i].word) > -1){                                
-                        choosenLeft = {word:ln[i].word, "method":"l", "score":ln[i].score, "count":ln[i].count};
-                        break;
-                    }
+        if(h1.length != h2.length)
+            return 1000000;
 
-                    if(ln[i].count < thresholdCount)
-                        break;
-                }
+        let distance = 0;
+        for(let i = 0; i < h1.length && i < h2.length; i++)
+                distance += this.levenshteinDistance(h1[i], h2[i]);
+        
+        return distance;
+    }
 
-                if(choosenLeft != undefined){
-                    array.unshift(choosenLeft);
-                    callbackSuccess(array);
-                }
-                else
-                    callbackFailed(array);
-            });
+    levenshteinDistance(a, b) {
+        if (a.length === 0) return b.length
+        if (b.length === 0) return a.length
+        let tmp, i, j, prev, val
+        // swap to save some memory O(min(a,b)) instead of O(a)
+        if (a.length > b.length) {
+            tmp = a
+            a = b
+            b = tmp
         }
+
+        let row = Array(a.length + 1)
+        // init the row
+        for (i = 0; i <= a.length; i++) {
+            row[i] = i
+        }
+
+        // fill in the rest
+        for (i = 1; i <= b.length; i++) {
+            prev = i
+            for (j = 1; j <= a.length; j++) {
+            if (b[i-1] === a[j-1]) {
+                val = row[j-1] // match
+            } else {
+                val = Math.min(row[j-1] + 1, // substitution
+                    Math.min(prev + 1,     // insertion
+                            row[j] + 1))  // deletion
+            }
+            row[j - 1] = prev
+            prev = val
+            }
+            row[a.length] = prev
+        }
+        return row[a.length]
     }
 
     getToday(){
         return Math.floor(Date.now() / 1000 / 60 / 60 / 24);
-    }
-
-    addManyInternal(headline, api, thresholdCount, thresholdChance, addManyFunction, callback)
-    {
-        let theBase = this;
-
-        let strHeadline = [];
-        for(let k in headline)
-            strHeadline.push(headline[k].word);
-
-        this.api.getSameHeadlineCountForDayAndWord(theBase.getToday(), strHeadline, function(candidatesResult){
-            let candidates = [];
-            for(let a in candidatesResult)
-                candidates.push(candidatesResult[a].word);
-
-            addManyFunction(headline, api, thresholdCount, thresholdChance, candidates,
-                function(newHeadline){
-                    //Success try again
-                    theBase.addManyInternal(newHeadline, api, thresholdCount, thresholdChance, addManyFunction, callback);
-                }, callback);
-        });
-    }
-
-    addManyLeft(headline, api, thresholdCount, thresholdChance, callback)
-    {
-        this.addManyInternal(headline, api, thresholdCount, thresholdChance, this.addWordLeft.bind(this), callback);
-    }
-
-    addManyRight(headline, api, thresholdCount, thresholdChance, callback)
-    {
-        this.addManyInternal(headline, api, thresholdCount, thresholdChance, this.addWordRight.bind(this), callback);
     }
 }

@@ -39,13 +39,17 @@ getToday = function(){
 }
 ```
 
-##Dependencies
+##Backend Dependencies (npm)
 * express
 * express-rest
 * cheerio
 * redis
 * request
 * node-schedule
+* fbgraph
+* nlp_compromise
+
+##Frontend Dependencies
 * bootstrap
 * JQuery
 

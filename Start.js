@@ -20,7 +20,7 @@ let ProcessLink = require('./Includes/ProcessLink.js');
 
 let Schedule = require('node-schedule');
 
-//End imports
+//Ende imports
 
 let dm = new DataManager(function()
 {
@@ -63,6 +63,7 @@ let dm = new DataManager(function()
 
     //Every hour
     Schedule.scheduleJob('10 * * * *', processLinks);
+    Schedule.scheduleJob('40 * * * *', processLinks);
 
     //Every two days
     Schedule.scheduleJob('15 23 */2 * *', function(){

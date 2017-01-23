@@ -19,9 +19,36 @@ let dm = new DataManager(function()
     let api = new DataAPI(dm.client);
     let hw = new HeadlineWriter(api);
 
-    hw.getHeadlinesToday(40, 15, 3, 0.01, function(result)
+    hw.getClusteredWords(30, 1.1, 15, function(result)
     {
-        console.log(result);
-    });
+        let hls = [];
+        for(let i in result)
+        {
+            let hl = [];
+            for(let r = 0; r < result[i].relations.length; r++)
+            {
+                hl.push(result[i].relations[r].word);
+            }
 
+            hl.unshift(result[i].word);
+
+            let found = false;
+            for(let a in hls)
+            {
+                if(hw.getDistance(hls[a], hl) <= 2)
+                {
+                    console.log("Same:");
+                    console.log(hls[a]);
+                    console.log(hl);
+                    found = true;
+                    break;
+                }
+            }
+
+            if(found == false)
+                hls.push(hl);
+        }
+
+        console.log(hls);
+    });
 });
