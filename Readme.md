@@ -12,6 +12,7 @@ This is a software which scans a given set of news sources and extracts its head
 * Provides a rest api for data access
 * Web frontend which supports most of the backend functionalities
 * The frontend is responsive
+* Example news bot for facebook
 
 ##Rest API
 These are the API endpoints
@@ -54,7 +55,7 @@ getToday = function(){
 * JQuery
 
 ##Setup
-Download the files, install Redis, install the npm dpendencies and run the 'Start.js'. You can also specify the news sources in the data/sources.json. After start navigate with your favorite browser to http://localhost:3000 to see the frontend. If you want to use the bots. You have to create the config.json in the /data folder. There is an example config in the same folder.
+Download the files, install Redis, install the npm dpendencies and run the 'Start.js'. You can also specify the news sources in the data/sources.json. After start navigate with your favorite browser to http://localhost:3000 to see the frontend. If you want to use the bots, you have to create the config.json in the /data folder. There is an example config in the same folder.
 
 ##Usage
 To run the webserver and the downloader / processor just execute the 'Start.js' file
@@ -62,6 +63,13 @@ To run the webserver and the downloader / processor just execute the 'Start.js' 
 ```
 > node Start.js
 ```
+
+##Facebook bot
+It is possible to create news bots for facebook pages with this framework. I created an example bot. Create a /data/config.json file for your facebook page and run
+```
+> node TestBot.js
+```
+If you want to see a bot in action: https://www.facebook.com/pg/whogotkilled/
 
 ##Generating the most recent headlines
 Try generating the most important headlines of the day by executing 'CreateHeadlines.js'. This is heighly experimental 
