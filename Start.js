@@ -20,9 +20,11 @@ let ProcessLink = require('./Includes/ProcessLink.js');
 
 let Schedule = require('node-schedule');
 
+let config = require("./data/config.json");
+
 //Ende imports
 
-let dm = new DataManager(function()
+let dm = new DataManager(config.redisPort, function()
 {
     let api = new DataAPI(dm.client);
     
@@ -48,8 +50,8 @@ let dm = new DataManager(function()
         });
     };
 
-    let listener = exp.listen(3000, function(){
-        console.log('Listening on port ' + listener.address().port); //Listening on port 8888
+    let listener = exp.listen(config.httpPort, function(){
+        console.log('Listening on port ' + listener.address().port);
     });
 
     //LinkScanner for Download

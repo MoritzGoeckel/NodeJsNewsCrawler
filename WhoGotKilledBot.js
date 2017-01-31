@@ -10,6 +10,8 @@ let Facebook = require("./Includes/Facebook.js");
 let nlp = require('nlp_compromise');
 //nlp.plugin(require('nlp-links'));
 
+let config = require("./data/config.json");
+
 //Ende imports
 
 let appToken = config.appId + "|" + config.appSecret; 
@@ -21,7 +23,7 @@ let fb = new Facebook(config.appId, config.appSecret);
 
 let lastPosts;
 
-let dm = new DataManager(function()
+let dm = new DataManager(config.redisPort, function()
 {
     let api = new DataAPI(dm.client);
     

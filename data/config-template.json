@@ -1,5 +1,7 @@
 {
     "appId":"...",
     "appSecret":"...",
-    "whoGotKilledToken":"..."
+    "whoGotKilledToken":"...",
+	"redisPort":"6379",
+	"httpPort":"63733"
 }

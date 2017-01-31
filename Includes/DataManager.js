@@ -4,10 +4,10 @@ let redis = require('redis');
 let Link = require('./Link.js');
 
 module.exports = class DataManager{
-    constructor(finishedInit)
+    constructor(port, finishedInit)
     {
         let theBase = this;
-        this.client = redis.createClient();        
+        this.client = redis.createClient(port);        
         this.client.on('connect', function() {
             console.log('Redis connected');
 

@@ -8,9 +8,11 @@ let Article = require('./Includes/Article.js');
 let Link = require('./Includes/Link.js');
 let DataManager = require('./Includes/DataManager.js');
 
+let config = require("./data/config.json");
+
 //End imports
 
-let dm = new DataManager(function(){
+let dm = new DataManager(config.redisPort, function(){
     
     //dm.deleteBlacklist("test");
     //dm.cleanSlate()
