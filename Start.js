@@ -24,6 +24,8 @@ let config = require("./data/config.json");
 
 //Ende imports
 
+console.log("Path is: " + __dirname);
+
 let dm = new DataManager(config.redisPort, function()
 {
     let api = new DataAPI(dm.client);
