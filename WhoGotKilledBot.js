@@ -15,7 +15,7 @@ let config = require("./data/config.json");
 //Ende imports
 
 let appToken = config.appId + "|" + config.appSecret; 
-let whoGotKilledId = "429425094115248";
+let whoGotKilledId = config.whoGotKilledId;
 let whoGotKilledToken = config.whoGotKilledToken;
 
 let fb = new Facebook(config.appId, config.appSecret);

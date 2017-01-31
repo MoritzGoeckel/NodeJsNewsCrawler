@@ -12,7 +12,7 @@ let config = require("./data/config.json");
 //Ende imports
 
 let appToken = config.appId + "|" + config.appSecret; 
-let trumpNewsId = "368533423539236";
+let trumpNewsId = config.trumpNewsId;
 let trumpNewsToken = config.trumpNewsToken;
 
 let fb = new Facebook(config.appId, config.appSecret);
