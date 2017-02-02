@@ -39,7 +39,7 @@ let dm = new DataManager(config.redisPort, function()
                             let found = false;
                             for(let l in lastPosts)
                             {
-                                if(lastPosts[l].message == link.title)
+                                if(lastPosts[l].message == link.title || lastPosts[l].link == link.url)
                                 {
                                     found = true;
                                     break;
