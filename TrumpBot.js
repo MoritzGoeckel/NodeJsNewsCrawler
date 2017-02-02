@@ -7,8 +7,6 @@ let config = require("./data/config.json");
 
 let Facebook = require("./Includes/Facebook.js");
 
-let config = require("./data/config.json");
-
 //Ende imports
 
 let appToken = config.appId + "|" + config.appSecret; 

@@ -10,8 +10,6 @@ let Facebook = require("./Includes/Facebook.js");
 let nlp = require('nlp_compromise');
 //nlp.plugin(require('nlp-links'));
 
-let config = require("./data/config.json");
-
 //Ende imports
 
 let appToken = config.appId + "|" + config.appSecret; 
