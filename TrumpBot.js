@@ -28,12 +28,12 @@ let dm = new DataManager(config.redisPort, function()
         fb.downloadPosts(trumpNewsId, function(data, prev, next){
             let pagePosts = data;
 
-            console.log(data);
-
             let postable = [];
             let done = 0;
             api.getLinksToWords(["trump"], function(res){ //Other words too?
-                for(let r = 0; r < res.length && r < 50; r++)
+                let todo = (res.length > 200 ? 200 : res.length);
+
+                for(let r = 0; r < todo; r++)
                 {
                     api.getLink(res[r], function(link){
                         if(link.sourceId != "dm") //Links from that site are buggy
@@ -62,15 +62,9 @@ let dm = new DataManager(config.redisPort, function()
                         }
 
                         done++;
-                        if(done == 20)
+                        if(done >= todo)
                         {
                             postable = postable.sort(function(a, b){return parseInt(b.date) - parseInt(a.date)});
-                        
-                            /*console.log("Postable: ");
-                            for(let p in postable){
-                                console.log(postable[p]); //All done
-                                console.log("");                            
-                            }*/
 
                             if(postable.length >= 1)
                             {
@@ -79,7 +73,7 @@ let dm = new DataManager(config.redisPort, function()
                                 fb.postTo(trumpNewsId, postable[0].title, postable[0].url, trumpNewsToken);
                                 lastPosts.push({message:postable[0].title, url:postable[0].url});
 
-                                while(lastPosts.length > 100)
+                                while(lastPosts.length > 200)
                                     lastPosts.shift();
 
                                 storage.setItem('trumpNewsLastPosts',JSON.stringify(lastPosts))
