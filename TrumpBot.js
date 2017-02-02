@@ -18,7 +18,7 @@ let fb = new Facebook(config.appId, config.appSecret);
 
 let storage = require("node-persist");
 
-let lastPosts;
+let lastPosts = [];
 
 let dm = new DataManager(config.redisPort, function()
 {
