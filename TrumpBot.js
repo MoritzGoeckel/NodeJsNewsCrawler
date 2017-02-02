@@ -16,6 +16,8 @@ let trumpNewsToken = config.trumpNewsToken;
 let fb = new Facebook(config.appId, config.appSecret);
 //fb.extendToken(trumpNewsToken);
 
+let storage = require("node-persist");
+
 let lastPosts;
 
 let dm = new DataManager(config.redisPort, function()
@@ -24,7 +26,7 @@ let dm = new DataManager(config.redisPort, function()
     
     let updateBot = function(){
         fb.downloadPosts(trumpNewsId, function(data, prev, next){
-            lastPosts = data;
+            let pagePosts = data;
 
             console.log(data);
 
@@ -37,9 +39,18 @@ let dm = new DataManager(config.redisPort, function()
                         if(link.sourceId != "dm") //Links from that site are buggy
                         {
                             let found = false;
+                            for(let l in pagePosts)
+                            {
+                                if(pagePosts[l].message == link.title)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
                             for(let l in lastPosts)
                             {
-                                if(lastPosts[l].message == link.title || lastPosts[l].link == link.url)
+                                if(lastPosts[l].message == link.title || lastPosts[l].url == link.url)
                                 {
                                     found = true;
                                     break;
@@ -66,6 +77,15 @@ let dm = new DataManager(config.redisPort, function()
                                 console.log("Posting: ");
                                 console.log(postable[0]);
                                 fb.postTo(trumpNewsId, postable[0].title, postable[0].url, trumpNewsToken);
+                                lastPosts.push({message:postable[0].title, url:postable[0].url});
+
+                                while(lastPosts.length > 100)
+                                    lastPosts.shift();
+
+                                storage.setItem('trumpNewsLastPosts',JSON.stringify(lastPosts))
+                                .then(function() {
+                                    console.log("Saved lastPosts");
+                                });
                             }
                             else
                             {
@@ -78,7 +98,16 @@ let dm = new DataManager(config.redisPort, function()
         });
     }
 
-    updateBot();
+    
+    storage.init().then(function() {
+    
+        storage.getItem('trumpNewsLastPosts')
+        .then(function(value) {
+            lastPosts = JSON.parse(value);
+            updateBot(); 
+        });
+
+    });
 
     //Every 10 minutes
     Schedule.scheduleJob('10 * * * *', updateBot);
