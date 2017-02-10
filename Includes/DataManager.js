@@ -95,6 +95,21 @@ module.exports = class DataManager{
         });
     }
 
+    deleteDetails(){
+        let theBase = this;
+        let deleteKeys = function (err, keys) {
+            for(let i = 0, len = keys.length; i < len; i++) {
+                theBase.client.del(keys[i], function(err, reply){
+                    console.log("Deleted: " + keys[i] + " | " + reply + " | " + err);
+                });
+            }
+        }
+
+        this.client.keys('rnWordsOnDay:*', deleteKeys);
+        this.client.keys('lnWordsOnDay:*', deleteKeys);
+        this.client.keys('daySameHeadlineCount:*', deleteKeys);
+    }
+
     getArticleToProcess(callback)
     {
         let theBase = this;

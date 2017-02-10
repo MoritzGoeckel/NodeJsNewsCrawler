@@ -69,14 +69,16 @@ let dm = new DataManager(config.redisPort, function()
     Schedule.scheduleJob('10 * * * *', processLinks);
     Schedule.scheduleJob('40 * * * *', processLinks);
 
-    //Every two days
-    Schedule.scheduleJob('15 23 */2 * *', function(){
+    //Every day
+    Schedule.scheduleJob('15 23 * * *', function(){
         //RolloverBlacklist
         for (i = 0; i < Sources.length; i++)
         {
             console.log("Switching blacklist: " + Sources[i].name);
             dm.rolloverBlacklist(Sources[i].id);        
-        }    
+        }
+
+        dm.deleteDetails();
     });
 
     downloadLinks();
