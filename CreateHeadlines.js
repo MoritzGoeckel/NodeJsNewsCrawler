@@ -20,7 +20,7 @@ let dm = new DataManager(config.redisPort, function()
     let api = new DataAPI(dm.client);
     let hw = new HeadlineWriter(api);
 
-    hw.getClusteredWords(30, 1.1, 15, function(result)
+    hw.getClusteredWords(30, 1.2, 10, function(result)
     {
         let hls = [];
         for(let i in result)
@@ -36,7 +36,7 @@ let dm = new DataManager(config.redisPort, function()
             let found = false;
             for(let a in hls)
             {
-                if(hw.getDistance(hls[a], hl) <= 2)
+                if(hw.getDistance(hls[a], hl) <= 1)
                 {
                     console.log("Same:");
                     console.log(hls[a]);
