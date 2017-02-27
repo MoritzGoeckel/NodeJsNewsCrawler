@@ -84,12 +84,8 @@ let dm = new DataManager(function()
 
     updateBot();
 
-    //Every 10 minutes
-    Schedule.scheduleJob('10 * * * *', updateBot);
-    Schedule.scheduleJob('20 * * * *', updateBot);
+    //Every 30 minutes
     Schedule.scheduleJob('30 * * * *', updateBot);
-    Schedule.scheduleJob('40 * * * *', updateBot);
-    Schedule.scheduleJob('50 * * * *', updateBot);
     Schedule.scheduleJob('0 * * * *', updateBot);
 });
 
@@ -110,7 +106,7 @@ function whoGotKilledFromTitle(title){
             var output = "";
             if(t > 0 && validVictim(sentence.terms[t - 1]) && (t + 1 < sentence.terms.length && isNumber(sentence.terms[t + 1].normal)) == false){ //Found left
                 output = sentence.terms[t - 1].text;
-                if(t - 2 >= 0 && isNumber(sentence.terms[t - 2].normal))
+                if(t - 2 >= 0 && sentence.terms[t - 2] != undefined && isNumber(sentence.terms[t - 2].normal))
                     output = sentence.terms[t - 2].text + " " + output;
             }
             else if(validVictim(sentence.terms[t + 1])) //Found right
@@ -136,7 +132,7 @@ function whoGotKilledFromTitle(title){
                 var foundIn = false;
                 for(let t2 = 0; t2 < sentence.terms.length; t2++)
                 {
-                    if(sentence.terms[t2].normal == "in")
+                    if(sentence.terms[t2].normal == "in" && sentence.terms[t2 + 1] != undefined)
                     {
                         foundIn = true;
                         output += " in " + sentence.terms[t2 + 1].text;
