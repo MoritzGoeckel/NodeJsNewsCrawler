@@ -7,7 +7,8 @@ module.exports.createWebApi = function(exp, rest, api, maxReturnElements, source
 {
     let theBase = this;
 
-    exp.use(express.static('Frontend'));
+    console.log("Serving: " + __dirname + '/../Frontend');
+    exp.use("/", express.static(__dirname + '/../Frontend'));
 
     //#######################################################  Search  #############
     rest.get('/api/search/:query', function(req, rest) {

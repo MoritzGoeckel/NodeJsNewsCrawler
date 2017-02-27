@@ -11,10 +11,11 @@ let DataManager = require('./Includes/DataManager.js');
 let DataAPI = require('./Includes/DataAPI.js');
 let HeadlineWriter = require('./Includes/HeadlineWriter.js');
 
+let config = require("./data/config.json");
  
 //End imports
 
-let dm = new DataManager(function()
+let dm = new DataManager(config.redisPort, function()
 {
     let api = new DataAPI(dm.client);
     let hw = new HeadlineWriter(api);

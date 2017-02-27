@@ -1,5 +1,9 @@
 {
     "appId":"...",
     "appSecret":"...",
-    "whoGotKilledToken":"..."
+    "whoGotKilledToken":"...",
+	"redisPort":"6379",
+	"httpPort":"63733",
+    "whoGotKilledId":"429425094115248",
+    "trumpNewsId":"368533423539236"
 }

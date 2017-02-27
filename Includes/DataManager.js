@@ -4,10 +4,10 @@ let redis = require('redis');
 let Link = require('./Link.js');
 
 module.exports = class DataManager{
-    constructor(finishedInit)
+    constructor(port, finishedInit)
     {
         let theBase = this;
-        this.client = redis.createClient();        
+        this.client = redis.createClient(port);        
         this.client.on('connect', function() {
             console.log('Redis connected');
 
@@ -93,6 +93,21 @@ module.exports = class DataManager{
                 console.log("Renamed the new to the old blacklist " + reply + " | " + err);
             });
         });
+    }
+
+    deleteDetails(){
+        let theBase = this;
+        let deleteKeys = function (err, keys) {
+            for(let i = 0, len = keys.length; i < len; i++) {
+                theBase.client.del(keys[i], function(err, reply){
+                    console.log("Deleted: " + keys[i] + " | " + reply + " | " + err);
+                });
+            }
+        }
+
+        this.client.keys('rnWordsOnDay:*', deleteKeys);
+        this.client.keys('lnWordsOnDay:*', deleteKeys);
+        this.client.keys('daySameHeadlineCount:*', deleteKeys);
     }
 
     getArticleToProcess(callback)
