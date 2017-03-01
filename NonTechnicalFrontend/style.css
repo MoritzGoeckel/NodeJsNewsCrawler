@@ -8,35 +8,36 @@ body{
 }
 
 .article{
-    background-color: white;
-    width: 48%;
+
+    width: 31%;
     height: 300px;
     box-shadow: 0px 0px 50px 0px grey;
     margin: 2% 1% 0% 1%;
     float: left;
 
     background-size: cover;
-    background-position-x: 40%;
+    background-repeat: no-repeat;
+    background-position-x: 50%;
+    background-position-y: 10%;
+
+    display: block;
 
     position: relative;
 }
 
 .article span{
-    font-size: 1.5vw;
-    color: white;
-    background-color: black;
-    margin: 15px 0px 0px 0px;
-    padding-left: 10px;
-    font-weight: bold;
-
-    position: absolute;
-    bottom: 10px;
-    width: 100%;
+    display:inline;
+    position: relative;
 }
 
 .article:hover span{
     color: black;
-    background-color: #fff200;
+}
+
+.article:hover{
+    -webkit-box-shadow:inset 0px 0px 0px 3px #fff200;
+    -moz-box-shadow:inset 0px 0px 0px 3px #fff200;
+    box-shadow:inset 0px 0px 0px 3px #fff200;
 }
 
 #head{
@@ -45,4 +46,27 @@ body{
     width: 100%;
     margin-bottom: 0px;
     border-bottom: solid 3px #fff200;
+}
+
+.headline{
+    display: block !important;
+    position: absolute !important;
+    width: 100%;
+
+    margin: 15px 0px 0px 0px;
+    padding-left: 10px;
+    bottom: 0px;
+
+    font-size: 1.5vw;    
+    color: white;
+
+}
+
+.tag{
+    
+}
+
+.title{
+    font-weight: bold;
+
 }
