@@ -22,8 +22,12 @@ Vibrant = require('node-vibrant');
 //End imports
 
 //Todo: Make it reliable (Every word gets its proper article)
+//(Image, description, reachable link, short title, containing the word)
+
 //Todo: Make the page responsive (bootstrap grid)
 //Todo: Generate different tiles (done:1x1 Todo:2x1 1x2 description)
+//Inspiration https://www.theguardian.com/international
+// https://www.washingtonpost.com/
 
 function getToday(){
     return Math.floor(Date.now() / 1000 / 60 / 60 / 24);
