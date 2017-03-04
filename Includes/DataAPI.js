@@ -64,8 +64,7 @@ module.exports = class DataAPI{
 
     getSameHeadlineForWord(words, callback)
     {
-        let tableName = Math.random() * 100000;
-        tableName = "tmp_" + tableName + "_SameHeadline_" + words.join("-");
+        let tableName = "tmp_SameHeadline_" + words.join("-");
 
         let theBase = this;
         let args = [tableName, words.length];
@@ -127,8 +126,7 @@ module.exports = class DataAPI{
     //Todo: Refactore duplicated code
     getSameHeadlineCountForDayAndWord(day, words, callback)
     {
-        let tableName = Math.random() * 100000;
-        tableName = "tmp_" + tableName + "_SameHeadlineDayWord_" + day + "_" + words.join("-");
+        let tableName = "tmp_SameHeadlineDayWord_" + day + "_" + words.join("-");
 
         let theBase = this;
         let args = [tableName, words.length];
@@ -287,7 +285,8 @@ module.exports = class DataAPI{
 
     getLinksToWords(words, callback)
     {
-        let args = ["tmp", words.length];
+        let searchTableName = "tmp_getlinks_" + JSON.stringify(words);
+        let args = [searchTableName, words.length];
         let wights = [];
 
         for(let i = 0; i < words.length; i++)
@@ -314,9 +313,9 @@ module.exports = class DataAPI{
                 args.push(wights[i]);
 
             theBase.client.zunionstore(args, function(err, reply){
-                theBase.client.zrevrangebyscore("tmp", "+inf", 0, function(err, reply){ //'withscores'
+                theBase.client.zrevrangebyscore(searchTableName, "+inf", 0, function(err, reply){ //'withscores'
                     callback(reply);
-                    theBase.client.del("tmp"); //Todo: Cacheing maybe?
+                    theBase.client.del(searchTableName); //Todo: Cacheing maybe?
                 });
             });
         });

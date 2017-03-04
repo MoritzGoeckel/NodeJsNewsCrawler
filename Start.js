@@ -61,13 +61,8 @@ let dm = new DataManager(config.redisPort, function()
         dm.saveCurrentScan(sourceId, links);
     });
 
-    //Every hour
-    Schedule.scheduleJob('0 * * * *', downloadLinks);
-    Schedule.scheduleJob('30 * * * *', downloadLinks);
-
-    //Every hour
-    Schedule.scheduleJob('10 * * * *', processLinks);
-    Schedule.scheduleJob('40 * * * *', processLinks);
+    Schedule.scheduleJob('*/10 * * * *', downloadLinks);
+    Schedule.scheduleJob('5-59/10 * * * *', processLinks);
 
     //Every day
     Schedule.scheduleJob('15 23 * * *', function(){

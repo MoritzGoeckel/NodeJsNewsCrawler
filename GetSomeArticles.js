@@ -33,13 +33,12 @@ function getToday(){
     return Math.floor(Date.now() / 1000 / 60 / 60 / 24);
 }
 
-function doLink(link, query, rank, articles){
+function getLink(link, query, rank, callback){
     request({url: link.url, headers: {'User-Agent': 'request'}}, function(error, response, body) {
-        console.log("Download: " + link.url);
-
         if(typeof response == 'undefined')
         {
             console.log("Error downloading: " + this.url);
+            callback(undefined);
             return;
         }
         
@@ -57,8 +56,6 @@ function doLink(link, query, rank, articles){
             
             if(article.link != undefined && article.query != undefined && article.title != undefined && article.desc != undefined && article.img != undefined)
             {
-                console.log("OK");
-
                 if(article.img != undefined)
                     Vibrant.from(article.img).getPalette((err, palette) => article.palette = palette);
 
@@ -71,10 +68,53 @@ function doLink(link, query, rank, articles){
                     }
                 }
 
-                if(found == false && article.link.title != undefined)
+                if(found == false && article.link.title != undefined && article.link.title.length < 200)
+                {
                     articles.push(article);
+                    callback(article);
+                    return;
+                }
+                else
+                {
+                    callback(undefined);
+                    return;
+                }
             }
         }
+    });
+}
+
+function getValidLink(api, links, query, rank, articles){
+    api.getLink(links[0], function(link){
+        getLink(link, query, rank, function(result){
+            if(result != undefined)
+            {
+                let articleAlreadyUsed = false;
+                for(let i in articles)
+                    if(articles[i].link.title == result.link.title)
+                    {
+                        articleAlreadyUsed = true;
+                        break;
+                    }
+                
+                if(articleAlreadyUsed == false){
+                    articles.push(result);
+                    articles.sort(function(a,b) {return (a.rank > b.rank) ? 1 : ((b.rank > a.rank) ? -1 : 0);});
+                    console.log("Found valid article: " + articles.length + " " + JSON.stringify(query));
+                }
+                else
+                {
+                    console.log("Found valid article but already in list: " + JSON.stringify(query));                    
+                }
+            }
+            else if(links != undefined){
+                console.log("Retry: " + JSON.stringify(query));
+                links.shift();
+                getValidLink(api, links, query, rank, articles);
+            }
+            else
+                console.log("Giving up on" + JSON.stringify(query));
+        });
     });
 }
 
@@ -85,18 +125,15 @@ let dm = new DataManager(config.redisPort, function()
     let articles = [];
 
     api.getMostPopularWordsOnDay(getToday(), 15, function(popular){
-       for(let i = 0; i < popular.length && i < 50; i++)
+       for(let i = 0; i < popular.length && i < 30; i++)
         {
-            api.getSameHeadlineCountForDayAndWord(getToday(), [popular[i].word], function(related){
-                let query = [popular[i].word];
+            let query = [popular[i].word];
+            api.getSameHeadlineCountForDayAndWord(getToday(), query, function(related){
                 if(related[0] != undefined)
                     query.push(related[0].word);
 
                 api.getLinksToWords(query, function(links){
-                    if(links[0] != undefined)
-                        api.getLink(links[0], function(link){
-                            doLink(link, query, i, articles);
-                        });
+                    getValidLink(api, links, query, i, articles);
                 });
             });
         } 
@@ -109,7 +146,6 @@ let dm = new DataManager(config.redisPort, function()
     exp.use("/", Express.static(__dirname + '/NonTechnicalFrontend'));
 
     rest.get('/api/somearticles/', function(req, rest) {
-        articles.sort(function(a,b) {return (a.rank > b.rank) ? 1 : ((b.rank > a.rank) ? -1 : 0);});
         return rest.ok(articles);
     });
 
