@@ -31,14 +31,18 @@ function findKeyWord(words, text){
 }
 
 $.getJSON( "api/somearticles", function( articles ) {
-    for(let a in articles){
+    for(let a = 0; a < articles.length; a++){
+        let foundTag = getTag(articles[a]);
 
-        if(articles[a].link.title.length < 200){
-            let foundTag = getTag(articles[a]);
+        let tag = foundTag != undefined ? "<span class='tag'>" + foundTag + ": </span>" : "";
 
-            let tag = foundTag != undefined ? "<span class='tag'>" + foundTag + ": </span>" : "";
+        let obj = undefined;
 
-            let obj = $("<a href='" + articles[a].link.url + "'><div class='article'><span class='headline'>" + tag + "<span class='title'>" + articles[a].link.title + "</span></span></div></a>");
+        if(Math.random() > 0.7){
+            obj = $("<a href='" + articles[a].link.url + "'><div class='article_text'><span class='headline'>" + tag + "<span class='title'>" + articles[a].link.title + "</span><span class='description'>"+articles[a].desc+"</span></span></div></a>");
+        }
+        else{
+            obj = $("<a href='" + articles[a].link.url + "'><div class='article'><span class='headline'>" + tag + "<span class='title'>" + articles[a].link.title + "</span></span></div></a>");
             obj.children(":first").css("backgroundImage", "url('" + articles[a].img + "')");
 
             if(articles[a].palette.LightVibrant != null){
@@ -49,8 +53,7 @@ $.getJSON( "api/somearticles", function( articles ) {
                     $(this).children(":first").children(".headline").css("background-color", e.type === "mouseenter" ? "rgba(255, 242, 0, 0.8)":getRGB(articles[a].palette.DarkVibrant)); 
                 });
             }
-
-            $("#wrapper").append(obj);
         }
+        $("#wrapper").append(obj);
     }
 });

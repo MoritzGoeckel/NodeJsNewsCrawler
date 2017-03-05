@@ -68,7 +68,11 @@ function getLink(link, query, rank, callback){
                     }
                 }
 
-                if(found == false && article.link.title != undefined && article.link.title.length < 200)
+                let endsWith = function(str, suffix) {
+                    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+                }
+
+                if(found == false && article.link.title != undefined && article.link.title.length < 70 && endsWith(article.link.title, "...") == false)
                 {
                     articles.push(article);
                     callback(article);
@@ -124,7 +128,7 @@ let dm = new DataManager(config.redisPort, function()
     
     let articles = [];
 
-    api.getMostPopularWordsOnDay(getToday(), 15, function(popular){
+    api.getMostPopularWordsOnDay(getToday(), 5, function(popular){
        for(let i = 0; i < popular.length && i < 30; i++)
         {
             let query = [popular[i].word];

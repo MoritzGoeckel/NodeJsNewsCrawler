@@ -1,3 +1,6 @@
+@font-face { font-family: 'futura';
+             src: url('fonts/fl.ttf') format('truetype'); }
+
 #wrapper{
     width: 100%;
 }
@@ -5,10 +8,10 @@
 body{
     background-color: #e9e7e8;
     margin: 2%;
+    font-family: 'futura', serif;
 }
 
-.article{
-
+.article, .article_text{
     width: 31%;
     height: 300px;
     box-shadow: 0px 0px 50px 0px grey;
@@ -23,6 +26,40 @@ body{
     display: block;
 
     position: relative;
+}
+
+.article_text, .article_text span, .article_text .headline{
+    background-color: none;
+    color: black;
+}
+
+.article_text{
+    background-color: white;
+
+    -webkit-box-shadow:inset 0px 0px 0px 3px #fff200;
+    -moz-box-shadow:inset 0px 0px 0px 3px #fff200;
+    box-shadow:inset 0px 0px 0px 3px #fff200;
+
+    overflow: auto;
+}
+
+.article_text:hover{
+    background-color: #fff200;
+}
+
+.article_text .headline{
+    position: relative;
+    bottom: auto;
+    padding-left: 22px;
+    padding-right: 22px;
+    
+}
+
+.article_text .description{
+    position: relative;
+    display: block;
+    margin-top: 16px;
+    font-size: 85%;
 }
 
 .article span{
@@ -60,6 +97,7 @@ body{
     font-size: 1.5vw;    
     color: white;
 
+    min-height: 4vw;
 }
 
 .tag{
