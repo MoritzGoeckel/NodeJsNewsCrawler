@@ -49,7 +49,7 @@ $.getJSON( "api/somearticles", function( articles ) {
 
         if(articles[a].palette.LightVibrant != null){
             //obj.children(":first").children(":first").css("color", getRGB(articles[a].palette.LightVibrant));
-            pictureObject.children(".headline").css("background-color", getRGB(articles[a].palette.DarkVibrant));
+            //pictureObject.children(".headline").css("background-color", getRGB(articles[a].palette.DarkVibrant));
             
             /*pictureObject.hover(function(e) { 
                 $(this).children(":first").children(".headline").css("background-color", e.type === "mouseenter" ? "rgba(255, 242, 0, 0.8)":getRGB(articles[a].palette.DarkVibrant)); 

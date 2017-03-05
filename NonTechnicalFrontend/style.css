@@ -2,20 +2,21 @@
              src: url('fonts/fl.ttf') format('truetype'); }
 
 #wrapper{
-    width: 100%;
+    width: 97%;
+    position: absolute;
+    border: solid 3px #fff200;
+    margin: 2%;
 }
 
 body{
     background-color: #e9e7e8;
-    margin: 2%;
     font-family: 'futura', serif;
 }
 
 .article, .article_text{
-    width: 31%;
+    width: 31.3%;
     height: 300px;
-    box-shadow: 0px 0px 50px 0px grey;
-    margin: 2% 1% 0% 1%;
+    margin: 1% 1% 1% 1%;
     float: left;
 
     background-size: cover;
@@ -37,10 +38,8 @@ body{
 
 .article_text{
     background-color: white;
-
-    -webkit-box-shadow:inset 0px 0px 0px 3px #fff200;
-    -moz-box-shadow:inset 0px 0px 0px 3px #fff200;
-    box-shadow:inset 0px 0px 0px 3px #fff200;
+    border: solid 3px #fff200;
+    
 }
 
 .article_text .imageholder, .article .imageholder{
@@ -83,11 +82,15 @@ body{
 }
 
 #head{
-    font-size: 3vw;
+    font-size: 6vw;
     font-weight: bolder;
     width: 100%;
     margin-bottom: 0px;
-    border-bottom: solid 3px #fff200;
+    /* border-bottom: solid 2px #fff200; */
+    text-align: center;
+    line-height: 1.5em;
+    letter-spacing: 0.2em;
+    text-shadow: 5px 5px 0px #fff200;
 }
 
 .headline{
@@ -103,6 +106,10 @@ body{
     color: white;
 
     min-height: 4vw;
+}
+
+.article .headline{
+    background-color: rgba(0, 0, 0, 0.8);    
 }
 
 .tag{
