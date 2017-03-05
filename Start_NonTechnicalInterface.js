@@ -128,7 +128,7 @@ let dm = new DataManager(config.redisPort, function()
     
     let articles = [];
 
-    api.getMostPopularWordsOnDay(getToday(), 5, function(popular){
+    api.getMostPopularWordsOnDay(getToday(), 10, function(popular){
        for(let i = 0; i < popular.length && i < 30; i++)
         {
             let query = [popular[i].word];

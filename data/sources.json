@@ -18,5 +18,6 @@
 {"url": "http://abcnews.go.com/", "name": "ABC", "id": "abc"},
 {"url": "http://www.bbc.com/news", "name": "BBC", "id": "bbc"},
 {"url": "http://www.usatoday.com/", "name": "USAToday", "id": "usat"},
-{"url": "http://www.latimes.com/", "name": "LATimes", "id": "lat"}
+{"url": "http://www.latimes.com/", "name": "LATimes", "id": "lat"},
+{"url": "http://www.breitbart.com/", "name": "Breitbart", "id": "btb"}
 ]

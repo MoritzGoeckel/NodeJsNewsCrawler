@@ -26,6 +26,8 @@ body{
     display: block;
 
     position: relative;
+
+    overflow: hidden;
 }
 
 .article_text, .article_text span, .article_text .headline{
@@ -39,12 +41,25 @@ body{
     -webkit-box-shadow:inset 0px 0px 0px 3px #fff200;
     -moz-box-shadow:inset 0px 0px 0px 3px #fff200;
     box-shadow:inset 0px 0px 0px 3px #fff200;
-
-    overflow: auto;
 }
 
-.article_text:hover{
-    background-color: #fff200;
+.article_text .imageholder, .article .imageholder{
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    background-size: cover;
+
+    width: 100%;
+    height: 100%;
+}
+
+.article_text .imageholder {
+    opacity: 0.2;
+}
+
+.article .imageholder {
+    z-index: -1;
 }
 
 .article_text .headline{
@@ -65,16 +80,6 @@ body{
 .article span{
     display:inline;
     position: relative;
-}
-
-.article:hover span{
-    color: black;
-}
-
-.article:hover{
-    -webkit-box-shadow:inset 0px 0px 0px 3px #fff200;
-    -moz-box-shadow:inset 0px 0px 0px 3px #fff200;
-    box-shadow:inset 0px 0px 0px 3px #fff200;
 }
 
 #head{
