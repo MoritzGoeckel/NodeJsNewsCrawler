@@ -19,5 +19,8 @@
 {"url": "http://www.bbc.com/news", "name": "BBC", "id": "bbc"},
 {"url": "http://www.usatoday.com/", "name": "USAToday", "id": "usat"},
 {"url": "http://www.latimes.com/", "name": "LATimes", "id": "lat"},
-{"url": "http://www.breitbart.com/", "name": "Breitbart", "id": "btb"}
+{"url": "http://www.breitbart.com/", "name": "Breitbart", "id": "btb"},
+{"url": "https://www.buzzfeed.com/news", "name": "BuzzfeedNews", "id":"bzz"},
+{"url": "http://www.cnbc.com/world/", "name": "CNBC", "id":"cnbc"},
+{"url": "https://www.bloomberg.com/europe", "name": "Bloomberg", "id":"blm"}
 ]

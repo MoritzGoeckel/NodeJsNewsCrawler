@@ -135,6 +135,8 @@ let dm = new DataManager(config.redisPort, function()
             api.getSameHeadlineCountForDayAndWord(getToday(), query, function(related){
                 if(related[0] != undefined)
                     query.push(related[0].word);
+                
+                console.log(query);
 
                 api.getLinksToWords(query, function(links){
                     getValidLink(api, links, query, i, articles);
