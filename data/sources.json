@@ -22,5 +22,6 @@
 {"url": "http://www.breitbart.com/", "name": "Breitbart", "id": "btb"},
 {"url": "https://www.buzzfeed.com/news", "name": "BuzzfeedNews", "id":"bzz"},
 {"url": "http://www.cnbc.com/world/", "name": "CNBC", "id":"cnbc"},
-{"url": "https://www.bloomberg.com/europe", "name": "Bloomberg", "id":"blm"}
+{"url": "https://www.bloomberg.com/europe", "name": "Bloomberg", "id":"blm"},
+{"url": "https://www.forbes.com/", "name": "Forbes", "id":"for"}
 ]
