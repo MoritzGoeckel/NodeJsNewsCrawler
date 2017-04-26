@@ -23,6 +23,6 @@
 {"url": "https://www.buzzfeed.com/news", "name": "BuzzfeedNews", "id":"bzzn"},
 {"url": "http://www.cnbc.com/world/", "name": "CNBC", "id":"cnbc"},
 {"url": "https://www.bloomberg.com/europe", "name": "Bloomberg", "id":"blm"},
-{"url": "https://www.forbes.com/", "name": "Forbes", "id":"for"}
+{"url": "https://www.forbes.com/", "name": "Forbes", "id":"for"},
 {"url": "https://www.buzzfeed.com/", "name": "Buzzfeed", "id":"bzz"}
 ]
