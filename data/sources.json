@@ -24,5 +24,8 @@
 {"url": "http://www.cnbc.com/world/", "name": "CNBC", "id":"cnbc"},
 {"url": "https://www.bloomberg.com/europe", "name": "Bloomberg", "id":"blm"},
 {"url": "https://www.forbes.com/", "name": "Forbes", "id":"for"},
-{"url": "https://www.buzzfeed.com/", "name": "Buzzfeed", "id":"bzz"}
+{"url": "https://www.buzzfeed.com/", "name": "Buzzfeed", "id":"bzz"},
+{"url": "http://www.huffingtonpost.com/", "name": "HuffingtonPost", "id":"hp"},
+{"url": "http://www.businessinsider.com/?IR=C&_ga=1.52083561.1955533103.1493496774", "name": "BusinessInsider", "id":"bi"},
+{"url": "http://www.reuters.com/?utm_expid=.RtYtvSVJQ0i6Uckg-SGbdA.0&utm_referrer=", "name": "Reuters", "id":"ret"}
 ]

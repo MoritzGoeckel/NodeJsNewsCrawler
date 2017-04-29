@@ -1,4 +1,5 @@
 let cheerio = require('cheerio');
+const stemmer = require('porter-stemmer').stemmer
 
 module.exports = class Article{
 
@@ -36,8 +37,14 @@ module.exports = class Article{
 
     extractTitle($){
         let title = $("meta[property='og:title']").attr("content");
+        if(typeof title != 'undefined' && title != null && title != "")
+            return title;
 
-        return title;
+        title = $("h1").text();
+        if(typeof title != 'undefined' && title != null && title != "")
+            return title;
+
+        return undefined;
     }
 
     extractDescription($){
@@ -47,16 +54,18 @@ module.exports = class Article{
     }
 
     extractImage($){
-        let image = $("meta[property='og:image']").attr("content");
-
-        return image;
+        /*$("article img").each(function( index ) {
+            return $(this).attr('src');
+        });*/
+        
+        return $("meta[property='og:image']").attr("content");
     }
 
     extractContent($){
         let content = "";
 
-        $("article p, article span").each(function( index ) {
-            let text = $( this ).text().replace(" ", "").replace("\r", "").replace("\n", "").replace("\n\r", "").replace("\t", "");
+        $("article p, article span, article blockquote").each(function( index ) {
+            let text = $( this ).text().replace("\r", " ").replace("\n", " ").replace("\n\r", " ").replace("\t", " ");
 
             let charCount = 0;
             for(let c in text){
@@ -65,13 +74,48 @@ module.exports = class Article{
             }
 
             if(charCount >= 70)
-                content += text + " ";
+                content += text + "."; //Indicating its a sentence brake
         });
 
-        return content;
+        return content.replace("  ", " ");
     }
 
     getShort(){
-        return {title:this.title, description:this.description, date:this.date, source:this.source, url:this.url, content:this.content.length, raw:this.raw.length};
+        return {title:this.title, image:this.image, description:this.description, date:this.date, source:this.source, url:this.url, content:this.content.length, raw:this.raw.length};
+    }
+
+    getAll(){
+        return {title:this.title, image:this.image, description:this.description, date:this.date, source:this.source, url:this.url, content:this.content, raw:this.raw};
+    }
+
+    getProcessedContent(){
+        let allowedChar = /[a-z0-9]/;
+        let endOfSentenceChar = /[\.\?\!\"”“]/;
+
+        let output = "";
+        let lastAddedChar = " ";
+        for(let c in this.content){
+            let char = this.content[c].toLowerCase();
+            if(allowedChar.test(char)){
+                if(lastAddedChar == "|")
+                    output += " ";
+
+                output += char;
+            }
+            else if(endOfSentenceChar.test(char) && lastAddedChar != "|" && output[output.length - 2] != "|"){
+                if(lastAddedChar != " ")
+                    output += " ";
+
+                output += "|";
+            }
+            else if(lastAddedChar != " ")
+                output += " ";
+            
+            lastAddedChar = output[output.length - 1];
+        }
+
+        //stemmer
+
+        return output;
     }
 }
