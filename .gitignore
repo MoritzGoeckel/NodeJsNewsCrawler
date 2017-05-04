@@ -1,3 +1,4 @@
 node_modules/
 data/config.json
 debug\.log
+data/elasticsearch-5.3.2/

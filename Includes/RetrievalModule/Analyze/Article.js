@@ -89,24 +89,26 @@ module.exports = class Article{
     }
 
     getProcessedContent(){
-        let allowedChar = /[a-z0-9]/;
+        let allowedChar = /[a-zA-Z0-9]/;
         let endOfSentenceChar = /[\.\?\!\"”“]/;
+        
+        let sentenceSeperator = ".";
 
         let output = "";
         let lastAddedChar = " ";
         for(let c in this.content){
-            let char = this.content[c].toLowerCase();
+            let char = this.content[c];//.toLowerCase();
             if(allowedChar.test(char)){
-                if(lastAddedChar == "|")
+                if(lastAddedChar == sentenceSeperator)
                     output += " ";
 
                 output += char;
             }
-            else if(endOfSentenceChar.test(char) && lastAddedChar != "|" && output[output.length - 2] != "|"){
+            else if(endOfSentenceChar.test(char) && lastAddedChar != sentenceSeperator && output[output.length - 2] != sentenceSeperator){
                 if(lastAddedChar != " ")
                     output += " ";
 
-                output += "|";
+                output += sentenceSeperator;
             }
             else if(lastAddedChar != " ")
                 output += " ";
