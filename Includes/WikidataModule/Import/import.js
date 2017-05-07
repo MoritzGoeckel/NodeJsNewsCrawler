@@ -33,7 +33,7 @@ setInterval(function(){
         outgoingQueue.push(toImportInDatabase[i]);
     }
   });
-}, 500);
+}, 20);
 
 function objectToArray(obj){
   let dict = {};
@@ -90,3 +90,5 @@ lineReader.on('line', function (line) {
         outgoingQueue.push(obj);
     }
 });
+
+//node --max_old_space_size=4096
