@@ -32,7 +32,7 @@ setInterval(function(){
   }
 
   if(toImportInDatabase.length > 0){
-    console.log("Inserting: " + toImportInDatabase.length + " items");
+    //console.log("Inserting: " + toImportInDatabase.length + " items");
 
     client.bulk({ body: body }, function (err, resp) {
       if(err != null && err != undefined){
@@ -155,6 +155,10 @@ function parseLine(line){
 }
 
 let readLines = 0;
+let skippedLines = 0;
+let errorLines = 0;
+let insertedLines = 0;
+
 let outgoingQueue = [];
 lineReader.on('line', function (line) {
     if(line != "[" && line != "]"){
@@ -169,27 +173,29 @@ lineReader.on('line', function (line) {
             console.log(hasRelationTo(obj, instanceOfBlacklist, "P31"));
           }*/
 
-          if(hasRelationTo(obj, instanceOfBlacklist, "P31") == false) //Somehow non of these survives this
+          if(hasRelationTo(obj, instanceOfBlacklist, "P31") == false){
             outgoingQueue.push(obj);
+            insertedLines++;
+          }
+          else
+            skippedLines++;
         }
         catch(err)
         { 
           console.log(err); 
           console.log(line);
+          errorLines++;
         }
     }
 
     readLines++;
 });
 
-let lastOutputedLine = -1;
 setInterval(function(){
-  if(lastOutputedLine != readLines)
-  {
-    console.log("Read items: " + readLines);
-    lastOutputedLine = readLines;
-  }
-}, 1000 * 60 * 1);
+    process.stdout.clearLine();
+    process.stdout.cursorTo(0);
+    process.stdout.write("Read items: " + readLines + " Errors: " + errorLines + " Skipped: " + skippedLines + " Inserted: " + insertedLines);
+}, 1000 * 0.3);
 
 lineReader.on('end', function(){
   console.log("End of file");
