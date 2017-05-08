@@ -1,5 +1,14 @@
 const elasticsearch = require('elasticsearch');
 
+//Instance of P31
+let instanceOfBlacklist = { 
+  "Q13406463":false, //Wikimedia list article
+  "Q17633526":false,  //Wikinews article
+  "Q4167410":false, //Wikimedia disambiguation page 
+  "Q11266439":false, //Wikimedia template
+  "Q4167836":false //Wikimedia category
+};
+
 var lineReader = require('readline').createInterface({
   input: require('fs').createReadStream("D:/#DATA/wikidata-latest-all.json")
 });
@@ -10,8 +19,6 @@ var client = new elasticsearch.Client({
 });
 
 setInterval(function(){
-  console.log("Doing: " + outgoingQueue.length + " items");
-
   let toImportInDatabase = outgoingQueue;
   outgoingQueue = [];
 
@@ -24,16 +31,78 @@ setInterval(function(){
     body.push( toImportInDatabase[i] );
   }
 
-  client.bulk({ body: body }, function (err, resp) {
-    if(err != null && err != undefined){
-      console.log(err);
+  if(outgoingQueue.length > 0){
+    console.log("Doing: " + outgoingQueue.length + " items");
+    client.bulk({ body: body }, function (err, resp) {
+      if(err != null && err != undefined){
+        console.log(err);
 
-      //Re add when error
-      for(let i = 0; i < toImportInDatabase.length; i++)
-        outgoingQueue.push(toImportInDatabase[i]);
-    }
-  });
+        //Re add when error
+        for(let i = 0; i < toImportInDatabase.length; i++)
+          outgoingQueue.push(toImportInDatabase[i]);
+      }
+    });
+  }
 }, 20);
+
+function hasRelationTo(entity, Qlist, property){
+  if(entity.claims[property] != undefined)
+  {
+    for(let snak in entity.claims[property])
+    {
+      let mainsnak = entity.claims[property][snak].mainsnak;
+      if(mainsnak.datatype == "wikibase-item" && mainsnak.datavalue != undefined && mainsnak.datavalue.type == "wikibase-entityid")
+      {
+        let prefix;
+        if(mainsnak.datavalue.value['entity-type'] == "property")
+          prefix = "P";
+        
+        if(mainsnak.datavalue.value['entity-type'] == "item")
+          prefix = "Q";
+        
+        if(prefix == undefined)
+          throw new Error(mainsnak.datavalue.value['entity-type'] + " wierd type!");
+        
+        if(mainsnak.property == property && Qlist[prefix + mainsnak.datavalue.value['numeric-id']] != undefined){
+          //console.log(mainsnak.property + " - " + property + " - " + prefix + mainsnak.datavalue.value['numeric-id']);
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
+function getLinkedEntities(entity){
+  let propertyBlacklist = {"P1889":"Different from"}; //Define blacklist
+  let entities = [];
+  for(let c in entity.claims)
+  {
+    if(entity.claims[c] != undefined)
+      for(let snak in entity.claims[c])
+      {
+        let mainsnak = entity.claims[c][snak].mainsnak;
+        if(mainsnak.datatype == "wikibase-item" && mainsnak.datavalue != undefined && mainsnak.datavalue.type == "wikibase-entityid")
+        {
+          let prefix;
+          if(mainsnak.datavalue.value['entity-type'] == "property")
+            prefix = "P";
+          
+          if(mainsnak.datavalue.value['entity-type'] == "item")
+            prefix = "Q";
+
+          if(prefix == undefined)
+            throw new Error(mainsnak.datavalue.value['entity-type'] + " wierd type!");
+          
+          if(propertyBlacklist[mainsnak.property] == undefined)
+            entities.push(prefix + mainsnak.datavalue.value['numeric-id']);
+        }
+      }
+  }
+
+  return entities;
+}
 
 function objectToArray(obj){
   let dict = {};
@@ -71,6 +140,8 @@ function parseLine(line){
     obj.labels = objectToArray(obj.labels);
     obj.aliases = objectToArray(obj.aliases);
 
+    obj.linkedto = getLinkedEntities(obj);
+
     if(obj.sitelinks != undefined && obj.sitelinks.enwiki != undefined)
         obj.enwiki = obj.sitelinks.enwiki.title;
     delete obj.sitelinks;
@@ -85,10 +156,27 @@ function parseLine(line){
 let outgoingQueue = [];
 lineReader.on('line', function (line) {
     if(line != "[" && line != "]"){
-        line = line.slice(0, -1); //Cut off comma
-        let obj = parseLine(line);
-        outgoingQueue.push(obj);
+        if(line.slice(-1) == ",")
+          line = line.slice(0, -1); //Cut off comma
+
+        try{
+          let obj = parseLine(line);
+
+          if(hasRelationTo(obj, instanceOfBlacklist, "P31") == false)
+            outgoingQueue.push(obj);
+          /*else
+            console.log("Rejected: " + obj.id);*/
+        }
+        catch(err)
+        { 
+          console.log(err); 
+          console.log(line);
+        }
     }
+});
+
+lineReader.on('end', function(){
+  console.log("End of file");
 });
 
 //node --max_old_space_size=4096
