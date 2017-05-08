@@ -31,15 +31,16 @@ setInterval(function(){
     body.push( toImportInDatabase[i] );
   }
 
-  if(outgoingQueue.length > 0){
-    console.log("Doing: " + outgoingQueue.length + " items");
+  if(toImportInDatabase.length > 0){
+    console.log("Inserting: " + toImportInDatabase.length + " items");
+
     client.bulk({ body: body }, function (err, resp) {
       if(err != null && err != undefined){
         console.log(err);
 
         //Re add when error
         for(let i = 0; i < toImportInDatabase.length; i++)
-          outgoingQueue.push(toImportInDatabase[i]);
+          toImportInDatabase.push(toImportInDatabase[i]);
       }
     });
   }
@@ -153,6 +154,7 @@ function parseLine(line){
     return obj;
 }
 
+let readLines = 0;
 let outgoingQueue = [];
 lineReader.on('line', function (line) {
     if(line != "[" && line != "]"){
@@ -162,10 +164,13 @@ lineReader.on('line', function (line) {
         try{
           let obj = parseLine(line);
 
-          if(hasRelationTo(obj, instanceOfBlacklist, "P31") == false)
+          /*if(obj.id == "Q1"){
+            console.log("Found Human");
+            console.log(hasRelationTo(obj, instanceOfBlacklist, "P31"));
+          }*/
+
+          if(hasRelationTo(obj, instanceOfBlacklist, "P31") == false) //Somehow non of these survives this
             outgoingQueue.push(obj);
-          /*else
-            console.log("Rejected: " + obj.id);*/
         }
         catch(err)
         { 
@@ -173,7 +178,18 @@ lineReader.on('line', function (line) {
           console.log(line);
         }
     }
+
+    readLines++;
 });
+
+let lastOutputedLine = -1;
+setInterval(function(){
+  if(lastOutputedLine != readLines)
+  {
+    console.log("Read items: " + readLines);
+    lastOutputedLine = readLines;
+  }
+}, 1000 * 60 * 1);
 
 lineReader.on('end', function(){
   console.log("End of file");
