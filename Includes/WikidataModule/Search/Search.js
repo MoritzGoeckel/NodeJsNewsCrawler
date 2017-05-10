@@ -36,6 +36,7 @@ module.exports = class WikimediaAPI{
         }
       
       hit.isExact = isExact;
+      hit.esScore = result.hits.hits[h]._score;
       allHits.push(hit);
     }
 
@@ -74,14 +75,17 @@ module.exports = class WikimediaAPI{
     return entities;
   }
 
-  search(term, closeEntities, callback){
+  search(term, closeEntities, mostImportantEntites, callback){
     let theBase = this;
 
     let should = [];
 
     for(let a in closeEntities)
-      should.push({ "match": { "linkedto": closeEntities[a] }});
+      should.push({ "match": { "linkedto": {"query":closeEntities[a], boost:5} }});
 
+    for(let a in mostImportantEntites)
+      should.push({ "match": { "linkedto": {"query":mostImportantEntites[a], boost:20} }});
+    
     this.client.search({index:"wikidata", type:"Q", body:{
       size: 200,
       from: 0,
@@ -96,7 +100,7 @@ module.exports = class WikimediaAPI{
             { "multi_match" : 
               {
                 "query": term, 
-                "fields": [ "aliases", "labels" ]
+                "fields": [ "aliases", "labels", "description" ]
               }
             },
           "should": should
