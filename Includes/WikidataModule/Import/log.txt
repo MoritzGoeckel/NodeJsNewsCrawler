@@ -1,0 +1,31 @@
+PS E:\Programmieren\Repos\NodeJSNewsCrawler\Includes\WikidataModule\Import> node --max_old_space_size=15000 .\Import.js
+Read items: 10569854 Errors: 0 Skipped: 2191186 Inserted: 8378667{ Error: Request Timeout after 30000ms
+    at E:\Programmieren\Repos\NodeJSNewsCrawler\node_modules\elasticsearch\src\lib\transport.js:342:15
+    at Timeout.<anonymous> (E:\Programmieren\Repos\NodeJSNewsCrawler\node_modules\elasticsearch\src\lib\transport.js:371:7)
+    at ontimeout (timers.js:365:14)
+    at tryOnTimeout (timers.js:237:5)
+    at Timer.listOnTimeout (timers.js:207:5)
+  status: 408,
+  displayName: 'RequestTimeout',
+  message: 'Request Timeout after 30000ms' }
+
+<--- Last few GCs --->
+
+ 2994110 ms: Scavenge 281.3 (659.3) -> 271.5 (659.3) MB, 6.8 / 0.0 ms [allocation failure].
+ 2994167 ms: Scavenge 284.7 (660.2) -> 276.2 (660.2) MB, 7.9 / 0.0 ms [allocation failure].
+ 2994235 ms: Scavenge 289.8 (660.9) -> 279.8 (660.9) MB, 6.0 / 0.0 ms [allocation failure].
+ 2996193 ms: Mark-sweep 1876.4 (2256.3) -> 1432.3 (1880.4) MB, 20.7 / 0.0 ms (+ 211.6 ms in 3 steps since start of marking, biggest step 145.6 ms) [GC interrup
+t] [GC in old space requested].
+
+
+<--- JS stacktrace --->
+
+==== JS stack trace =========================================
+
+Security context: 000003198D3CFB61 <JS Object>
+    2: /* anonymous */ [E:\Programmieren\Repos\NodeJSNewsCrawler\Includes\WikidataModule\Import\Import.js:~37] [pc=0000028EF51C4606] (this=000003198D3E6659 <JS
+ Global Object>,err=0000021E974B05E9 <a StatusCodeError with map 000003F418A26C21>,resp=000003198D304381 <undefined>)
+    3: arguments adaptor frame: 3->2
+    4: respond [E:\Programmieren\Repos\NodeJSNewsCrawler\node_modules\elasticsear...
+
+FATAL ERROR: invalid array length Allocation failed - JavaScript heap out of memory

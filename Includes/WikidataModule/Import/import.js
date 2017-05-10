@@ -1,4 +1,5 @@
 const elasticsearch = require('elasticsearch');
+const AgentKeepAlive = require('agentkeepalive');
 
 //Instance of P31
 let instanceOfBlacklist = { 
@@ -9,42 +10,26 @@ let instanceOfBlacklist = {
   "Q4167836":false //Wikimedia category
 };
 
+let batchSize = 300;
+
 var lineReader = require('readline').createInterface({
   input: require('fs').createReadStream("D:/#DATA/wikidata-latest-all.json")
 });
 
 var client = new elasticsearch.Client({
-  host: 'localhost:9200',
-  log: 'error'
+  hosts: ['localhost:9200'],
+  maxRetries: 10,
+  keepAlive: true,
+  maxSockets: 10,
+  minSockets: 10,
+  createNodeAgent: function (connection, config) {
+    return new AgentKeepAlive(connection.makeAgentConfig(config));
+  },
+  log: 'error',
+  requestTimeout: 20 * 1000
 });
 
-setInterval(function(){
-  let toImportInDatabase = outgoingQueue;
-  outgoingQueue = [];
-
-  let body = [];
-
-  for(let i = 0; i < toImportInDatabase.length; i++)
-  {
-    let type = toImportInDatabase[i].id.substring(0, 1);
-    body.push({ index:  { _index: 'wikidata', _type: type } });
-    body.push( toImportInDatabase[i] );
-  }
-
-  if(toImportInDatabase.length > 0){
-    //console.log("Inserting: " + toImportInDatabase.length + " items");
-
-    client.bulk({ body: body }, function (err, resp) {
-      if(err != null && err != undefined){
-        console.log(err);
-
-        //Re add when error
-        for(let i = 0; i < toImportInDatabase.length; i++)
-          toImportInDatabase.push(toImportInDatabase[i]);
-      }
-    });
-  }
-}, 20);
+//Client.apis[config.apiVersion].ping.spec.requestTimeout = 20 * 1000;
 
 function hasRelationTo(entity, Qlist, property){
   if(entity.claims[property] != undefined)
@@ -154,6 +139,22 @@ function parseLine(line){
     return obj;
 }
 
+function sendToES(body){
+  client.bulk({ body: body }, function (err, resp) {
+    if(err != null && err != undefined){
+      setTimeout(function(){sendToES(body);}, 0);         
+      
+      console.log("");
+      console.log(err); 
+      console.log("");
+    }
+    else{
+      insertedLines += body.length / 2;
+      lineReader.resume(); //Only if sucessful
+    }
+  });
+}
+
 let readLines = 0;
 let skippedLines = 0;
 let errorLines = 0;
@@ -168,14 +169,8 @@ lineReader.on('line', function (line) {
         try{
           let obj = parseLine(line);
 
-          /*if(obj.id == "Q1"){
-            console.log("Found Human");
-            console.log(hasRelationTo(obj, instanceOfBlacklist, "P31"));
-          }*/
-
           if(hasRelationTo(obj, instanceOfBlacklist, "P31") == false){
             outgoingQueue.push(obj);
-            insertedLines++;
           }
           else
             skippedLines++;
@@ -189,15 +184,43 @@ lineReader.on('line', function (line) {
     }
 
     readLines++;
+    
+    if(outgoingQueue.length >= batchSize){
+      lineReader.pause();
+
+      let body = [];
+      for(let i = 0; i < outgoingQueue.length; i++)
+      {
+        let type = outgoingQueue[i].id.substring(0, 1);
+        body.push({ index:  { _index: 'wikidata', _type: type } });
+        body.push( outgoingQueue[i] );
+      }
+      outgoingQueue = [];
+
+      sendToES(body);
+    }
 });
 
 setInterval(function(){
-    process.stdout.clearLine();
-    process.stdout.cursorTo(0);
-    process.stdout.write("Read items: " + readLines + " Errors: " + errorLines + " Skipped: " + skippedLines + " Inserted: " + insertedLines);
+    if(readLines != 0){
+      process.stdout.clearLine();
+      process.stdout.cursorTo(0);
+      process.stdout.write("Read items: " + readLines + "/" + "26144431 (" + Math.round(readLines/26144431*100)  + "%) Errors: " + errorLines + " Skipped: " + skippedLines + " (" +  Math.round(skippedLines/readLines*100) + "%) Inserted: " + insertedLines + " ("+(readLines - skippedLines - insertedLines) + "/" + batchSize + ")");
+    }
 }, 1000 * 0.3);
 
 lineReader.on('end', function(){
+  let body = [];
+  for(let i = 0; i < outgoingQueue.length; i++)
+  {
+    let type = outgoingQueue[i].id.substring(0, 1);
+    body.push({ index:  { _index: 'wikidata', _type: type } });
+    body.push( outgoingQueue[i] );
+  }
+  outgoingQueue = [];
+  sendToES(body);
+  
+  console.log("End of file");
   console.log("End of file");
 });
 

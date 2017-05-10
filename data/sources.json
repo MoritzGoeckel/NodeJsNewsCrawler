@@ -45,5 +45,6 @@
 {"url": "http://www.rttnews.com/", "name": "rttnews", "id":"rttn"},
 {"url": "http://www.otcmarkets.com/news/otc-news", "name": "otcmarkets", "id":"otcm"},
 {"url": "https://www.streetinsider.com/", "name": "streetinsider", "id":"stri"},
-{"url": "http://www.marketwatch.com/", "name": "marketwatch", "id":"mkw"}
+{"url": "http://www.marketwatch.com/", "name": "marketwatch", "id":"mkw"},
+{"url": "http://www.marketpulse.com/", "name": "marketpulse", "id":"mkp"}
 ]
