@@ -1,7 +1,7 @@
-#NewsCrawler
+# NewsCrawler
 This is a software which scans a given set of news sources and extracts its headlines. The headlines are processed and saved for later analysis. The data can be accessed from a web frontend or a rest API. Its all about the analysis of news trends.
 
-##Features
+## Features
 * Downloads article titles from the news data/sources.json
 * Saves them in a Redis database
 * Creates an inverted index for search
@@ -14,7 +14,7 @@ This is a software which scans a given set of news sources and extracts its head
 * The frontend is responsive
 * Example news bot for facebook
 
-##Rest API
+## Rest API
 These are the API endpoints
 
 ```
@@ -40,7 +40,7 @@ getToday = function(){
 }
 ```
 
-##Backend Dependencies (npm)
+## Backend Dependencies (npm)
 * express
 * express-rest
 * cheerio
@@ -50,21 +50,21 @@ getToday = function(){
 * fbgraph
 * nlp_compromise
 
-##Frontend Dependencies
+## Frontend Dependencies
 * bootstrap
 * JQuery
 
-##Setup
+## Setup
 Download the files, install Redis, install the npm dpendencies and run the 'Start.js'. You can also specify the news sources in the data/sources.json. After start navigate with your favorite browser to http://localhost:3000 to see the frontend. If you want to use the bots, you have to create the config.json in the /data folder. There is an example config in the same folder.
 
-##Usage
+## Usage
 To run the webserver and the downloader / processor just execute the 'Start.js' file
 
 ```
 > node Start.js
 ```
 
-##Facebook bot
+## Facebook bot
 It is possible to create news bots for facebook pages with this framework. I created an example bot. Create a /data/config.json file for your facebook page and run
 ```
 > node WhoGotKilledBot.js
@@ -74,7 +74,7 @@ If you want to see a bot in action: https://www.facebook.com/pg/whogotkilled/
 The WhoGotKilledBot searches for news with the word "killed" and tires to extract the information who got killed in which place. It will post these articles every 10 minutes to the facebook page and avoids doublicated posts. There is also an TrumpNews bot.
 
 
-##Generating the most recent headlines
+## Generating the most recent headlines
 Try generating the most important headlines of the day by executing 'CreateHeadlines.js'. This is heighly experimental 
 
 ```
@@ -106,5 +106,5 @@ Try generating the most important headlines of the day by executing 'CreateHeadl
   ...
 ```
 
-##Frontend
+## Frontend
 ![alt tag](https://raw.githubusercontent.com/MoritzGoeckel/NodeJSNewsCrawler/master/docs/newsscreen.PNG)
