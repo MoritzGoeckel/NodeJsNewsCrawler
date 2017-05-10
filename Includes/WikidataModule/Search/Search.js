@@ -10,8 +10,6 @@ module.exports = class WikimediaAPI{
   }
 
   processSearchResult(term, result){
-    let exactHits = [];
-    let notExactHits = [];
     let allHits = [];
 
     //console.log("Num Hits: " + result.hits.hits.length);
@@ -37,15 +35,11 @@ module.exports = class WikimediaAPI{
           }
         }
       
-      if(isExact)
-        exactHits.push(hit);
-      else
-        notExactHits.push(hit);
-
+      hit.isExact = isExact;
       allHits.push(hit);
     }
 
-    return {exact:exactHits, notexact:notExactHits, all:allHits};
+    return allHits;
   }
 
   getLinkedEntities(entity){
@@ -80,15 +74,32 @@ module.exports = class WikimediaAPI{
     return entities;
   }
 
-  search(term, callback){
+  search(term, closeEntities, callback){
     let theBase = this;
+
+    let should = [];
+
+    for(let a in closeEntities)
+      should.push({ "match": { "linkedto": closeEntities[a] }});
+
     this.client.search({index:"wikidata", type:"Q", body:{
       size: 200,
       from: 0,
       query: {
-        query_string: {
+        /*query_string: {
           query: '(aliases:"'+term+'" OR labels:"'+term+'")',
           "use_dis_max" : true
+        }*/
+        "bool": 
+        {
+          "must": 
+            { "multi_match" : 
+              {
+                "query": term, 
+                "fields": [ "aliases", "labels" ]
+              }
+            },
+          "should": should
         }
       }
     }}).then(result => {
