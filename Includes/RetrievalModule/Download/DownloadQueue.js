@@ -4,9 +4,14 @@ var interval = Symbol();
 var openConnections = Symbol();
 
 module.exports = class DownloadQueue{
-    constructor(openConnectionLimit)
+    constructor(openConnectionLimit, reenque)
     {
         var base = this;
+
+        if(reenque == undefined)
+            this.reenque = true;
+        else
+            this.reenque = reenque;
 
         //Private
         this[openConnections] = 0;
@@ -26,8 +31,13 @@ module.exports = class DownloadQueue{
                 var options = {
                     url: queEntry.url,
                     headers: {
-                        'User-Agent': 'request'
-                    }
+                        'USER-AGENT': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+                        'ACCEPT_ENCODING': 'gzip, deflate, sdch, br',
+                        'ACCEPT': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                        'CONNECTION': 'keep-alive',
+                        'UPGRADE_INSECURE_REQUESTS': 1
+                    },
+                    jar: true
                 };
 
                 request(options, function(error, response, body){
@@ -38,9 +48,22 @@ module.exports = class DownloadQueue{
                     }
                     else
                     {
-                        console.log("Download failed, reenqueing: " + JSON.stringify(queEntry.url));
                         base[openConnections]--;
-                        base.enqueDownload(queEntry.url);
+
+                        console.log("Download failed: " + JSON.stringify(queEntry.url));
+
+                        if(response != undefined)
+                            console.log("Code: " + response.statusCode);
+                        
+                        //console.log(response);
+
+                        if(error != null)
+                            console.log("Error: " + error);
+
+                        if(base.reenque){
+                            console.log("reenqueing: " + JSON.stringify(queEntry.url));
+                            base.enqueDownload(queEntry.url);
+                        }
                     }
                 });
             }

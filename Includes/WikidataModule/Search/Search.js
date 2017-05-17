@@ -16,26 +16,29 @@ module.exports = class WikimediaAPI{
 
     for(let h in result.hits.hits){
       let hit = result.hits.hits[h]._source; 
-      let isExact = false;
+      hit.isExact = false;
+      hit.isExactLabel = false;
+      hit.isExactAlias = false;
+      
 
       for(let l in hit.labels){
         if(hit.labels[l].toLowerCase() == term.toLowerCase())
         {
-          isExact = true;
+          hit.isExact = true;
+          hit.isExactLabel = true;
           break;
         }
       }
       
-      if(isExact == false)
-        for(let a in hit.aliases){
-          if(hit.aliases[a].toLowerCase() == term.toLowerCase())
-          {
-            isExact = true;
-            break;
-          }
+      for(let a in hit.aliases){
+        if(hit.aliases[a].toLowerCase() == term.toLowerCase())
+        {
+          hit.isExact = true;
+          hit.isExactAlias = true;
+          break;
         }
+      }
       
-      hit.isExact = isExact;
       hit.esScore = result.hits.hits[h]._score;
       allHits.push(hit);
     }
