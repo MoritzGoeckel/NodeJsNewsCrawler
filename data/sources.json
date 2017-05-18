@@ -50,5 +50,6 @@
 {"url": "https://www.reddit.com/r/worldnews/", "name": "Reddit", "id":"rdt"},
 {"url": "http://news.lycos.com", "name": "Lycos", "id":"lyc"},
 {"url": "http://business.lycos.com/", "name": "LycosBusiness", "id":"lycb"},
-{"url": "https://news.vice.com/", "name": "Vice News", "id":"vice"}
+{"url": "https://news.vice.com/", "name": "Vice News", "id":"vice"},
+{"url": "http://www.nasdaq.com/news/", "name": "Nasdaq", "id":"nasdaq"}
 ]
