@@ -40,7 +40,6 @@ module.exports = class {
         loadAnnotatedFile("../../../data/ngtv.txt", "pn", "n", this.dict);
         loadAnnotatedFile("../../../data/my-positive.txt", "pn", "p", this.dict);
         
-
         //Blacklist
         delete this.dict["trump"];
 
